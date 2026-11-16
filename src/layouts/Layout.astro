@@ -1,7 +1,6 @@
 ---
 import "../styles/global.css";
 import { AccountMenu } from "../ui/account-menu";
-import CtaSection from "../ui/cta-section.astro";
 import { skills } from "../data/skills";
 import { playbook } from "../data/playbook";
 import Footer from "../ui/footer.astro";
@@ -24,7 +23,6 @@ type Props = {
   twitterSite?: string;
   ogType?: string;
   siteName?: string;
-  showNewsletter?: boolean;
   showFooter?: boolean;
   fullScreen?: boolean;
 };
@@ -41,7 +39,6 @@ const {
   twitterSite,
   ogType,
   siteName,
-  showNewsletter = true,
   showFooter = true,
   fullScreen = false,
 } = Astro.props as Props;
@@ -218,13 +215,6 @@ const commandItems = [
       <main id="main-content">
         <slot />
       </main>
-      {
-        showNewsletter && !fullScreen && (
-          <div class="container-3xl mt-10">
-            <CtaSection />
-          </div>
-        )
-      }
       {showFooter && !fullScreen && <Footer />}
     </div>
 
