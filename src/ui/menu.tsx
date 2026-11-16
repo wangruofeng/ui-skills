@@ -47,14 +47,14 @@ function Item({
   className,
   ...props
 }: ComponentProps<typeof BaseMenu.Item>) {
-  return <BaseMenu.Item className={cn(itemClass, className)} {...props} />;
+  return <BaseMenu.Item className={(state) => cn(itemClass, typeof className === "function" ? className(state) : className)} {...props} />;
 }
 
 function LinkItem({
   className,
   ...props
 }: ComponentProps<typeof BaseMenu.LinkItem>) {
-  return <BaseMenu.LinkItem className={cn(itemClass, className)} {...props} />;
+  return <BaseMenu.LinkItem className={(state) => cn(itemClass, typeof className === "function" ? className(state) : className)} {...props} />;
 }
 
 function CheckboxItem({
@@ -62,7 +62,7 @@ function CheckboxItem({
   ...props
 }: ComponentProps<typeof BaseMenu.CheckboxItem>) {
   return (
-    <BaseMenu.CheckboxItem className={cn(itemClass, className)} {...props} />
+    <BaseMenu.CheckboxItem className={(state) => cn(itemClass, typeof className === "function" ? className(state) : className)} {...props} />
   );
 }
 
@@ -72,7 +72,7 @@ function Separator({
 }: ComponentProps<typeof BaseMenu.Separator>) {
   return (
     <BaseMenu.Separator
-      className={cn("border-line-default mx-2 my-1 border-t", className)}
+      className={(state) => cn("border-line-default mx-2 my-1 border-t", typeof className === "function" ? className(state) : className)}
       {...props}
     />
   );

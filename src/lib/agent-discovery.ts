@@ -1,4 +1,4 @@
-const SITE_ORIGIN = "https://www.ui-skills.com";
+const SITE_ORIGIN = "https://ui-skills.wangruofeng007.com";
 
 export const API_CATALOG_PATH = "/.well-known/api-catalog";
 export const API_CATALOG_PROFILE = "https://www.rfc-editor.org/info/rfc9727";

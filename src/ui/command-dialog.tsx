@@ -126,7 +126,22 @@ const highlightText = (value: string, query: string): ReactNode => {
   );
 };
 
-export function CommandDialog({ items, hideTrigger = false }: CommandDialogProps) {
+export function CommandDialog({ items: initialItems, hideTrigger = false }: CommandDialogProps) {
+  const [items, setItems] = useState(initialItems);
+  const [indexLoading, setIndexLoading] = useState(true);
+  const [indexError, setIndexError] = useState(false);
+  const [indexRetry, setIndexRetry] = useState(0);
+  useEffect(() => {
+    const controller = new AbortController();
+    setIndexLoading(true);
+    setIndexError(false);
+    fetch("/data/search-index.json", { signal: controller.signal })
+      .then(response => { if (!response.ok) throw new Error("Search index unavailable"); return response.json(); })
+      .then((entries: CommandItem[]) => { if (!Array.isArray(entries)) throw new Error("Invalid search index"); setItems(entries); })
+      .catch(() => { if (!controller.signal.aborted) setIndexError(true); })
+      .finally(() => { if (!controller.signal.aborted) setIndexLoading(false); });
+    return () => controller.abort();
+  }, [indexRetry]);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -276,7 +291,7 @@ export function CommandDialog({ items, hideTrigger = false }: CommandDialogProps
 
     setOpen(false);
     setQuery("");
-    window.location.href = selected.href;
+    window.location.href = (location.pathname.startsWith("/en/") ? "/en" : "") + selected.href;
   };
 
   const onInputKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
@@ -375,6 +390,8 @@ export function CommandDialog({ items, hideTrigger = false }: CommandDialogProps
               role="listbox"
               id="command-search-results"
             >
+              {indexLoading && <p role="status" className="px-3 py-2 text-sm text-content-secondary">Loading full catalog…</p>}
+              {indexError && <button type="button" className="px-3 py-2 text-sm text-content-secondary underline" onClick={() => setIndexRetry(value => value + 1)}>Search catalog could not load. Retry</button>}
               {filteredItems.length === 0 ? (
                 <div className="text-content-secondary px-2 py-8 text-center text-sm">
                   No skills or playbook entries found.

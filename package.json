@@ -1,5 +1,5 @@
 {
-  "name": "ui-skills",
+  "name": "ui-skills-mirror",
   "type": "module",
   "version": "0.2.4",
   "license": "MIT",
@@ -14,9 +14,8 @@
     "auth:setup:dev": "node scripts/setup-auth-dev.mjs",
     "db:migrate:local": "wrangler d1 migrations apply AUTH_DB --local --config wrangler.jsonc",
     "db:migrate:remote": "wrangler d1 migrations apply AUTH_DB --remote --config wrangler.jsonc",
-    "prebuild": "node ./scripts/sync-stonks.mjs",
-    "build": "astro build",
-    "postbuild": "node ./scripts/write-assetsignore.mjs",
+    "build": "UI_SKILLS_BUILD_CACHE=1 astro build",
+    "postbuild": "node scripts/localize-site.mjs",
     "check:skills": "node --import tsx ./scripts/check-registry-skills.mjs",
     "check:publisher-skills": "node --import tsx ./scripts/check-publisher-skills.mjs",
     "digests": "node --import tsx ./scripts/precompute-agent-skills-digests.mjs",
@@ -28,7 +27,10 @@
     "typecheck": "astro check",
     "test": "node --import tsx --test tests/*.test.ts",
     "smoke": "node tests/smoke.mjs",
-    "check": "npm run typecheck && npm run check:skills && npm test && npm run build && npm run smoke"
+    "check": "npm run typecheck && npm test && npm run build && npm run verify:site",
+    "start": "astro dev",
+    "prebuild": "node --import tsx scripts/cache-skills.mjs",
+    "verify:site": "node scripts/verify-site.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.3.1",
@@ -60,6 +62,7 @@
     "@types/node": "^25.9.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "parse5": "^8.1.1",
     "prettier": "^3.3.3",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-tailwindcss": "^0.6.8",
@@ -69,5 +72,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "private": true
 }

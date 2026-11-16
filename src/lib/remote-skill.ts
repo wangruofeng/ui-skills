@@ -1,3 +1,5 @@
+import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { createHash } from "node:crypto";
 const CACHE_TTL_SECONDS = 60 * 60 * 24;
 const CACHE_STALE_AFTER_MS = CACHE_TTL_SECONDS * 1000;
 const MAX_CONTENT_BYTES = 1024 * 1024;
@@ -101,6 +103,15 @@ const readCachedContent = async (cache: CacheLike, key: Request) => {
 export const getRemoteSkill = async (
   rawUrl: string,
 ): Promise<RemoteSkillResult> => {
+  const snapshot = `.cache/skills/${createHash("sha256").update(rawUrl).digest("hex")}.md`;
+  const buildCache = process.env.UI_SKILLS_BUILD_CACHE === "1";
+  if (buildCache) {
+    try { return { content: await readFile(snapshot, "utf8"), stale: false }; } catch {}
+    try {
+      const unavailable = JSON.parse(await readFile(snapshot + ".unavailable.json", "utf8"));
+      if (Date.now() - unavailable.checkedAt < 3600000) throw new RemoteSkillError("Skill source unavailable", 404);
+    } catch (error) { if (error instanceof RemoteSkillError) throw error; }
+  }
   const cache = getCache();
   const cacheKey = new Request(rawUrl);
   const cached = cache ? await readCachedContent(cache, cacheKey) : undefined;
@@ -128,6 +139,10 @@ export const getRemoteSkill = async (
     }
 
     const content = await readBoundedText(response);
+    if (buildCache) {
+      await mkdir(".cache/skills", { recursive: true });
+      await writeFile(snapshot, content);
+    }
     if (cache) {
       try {
         await cache.put(

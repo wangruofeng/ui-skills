@@ -1,0 +1,13 @@
+import { registry } from '../src/data/registry.ts';
+import {writeFile,mkdir} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import { getRemoteSkill } from '../src/lib/remote-skill.ts';
+process.env.UI_SKILLS_BUILD_CACHE="1";
+let cursor=0,done=0;const errors=[];
+await Promise.all(Array.from({length:12},async()=>{while(cursor<registry.length){const entry=registry[cursor++];try{await getRemoteSkill(entry.rawUrl);done++;}catch(e){errors.push({path:entry.pathSlug,error:String(e)});
+await mkdir('.cache/skills',{recursive:true});
+await writeFile(`.cache/skills/${createHash('sha256').update(entry.rawUrl).digest('hex')}.md.unavailable.json`,JSON.stringify({checkedAt:Date.now(),url:entry.rawUrl}));}}}));
+console.log(`Skill build cache: ${done}/${registry.length}; ${errors.length} unavailable sources.`);
+await mkdir('.cache',{recursive:true});
+await writeFile('.cache/unavailable-sources.json',JSON.stringify(errors,null,2)+'\n');
+if(errors.length)console.log(JSON.stringify(errors));

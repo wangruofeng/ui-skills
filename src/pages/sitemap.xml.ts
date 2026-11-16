@@ -12,7 +12,7 @@ import { SHOW_DESIGN_MD } from "../config/features";
 
 export const prerender = true;
 
-const SITE_URL = "https://www.ui-skills.com";
+const SITE_URL = "https://ui-skills.wangruofeng007.com";
 
 const escapeXml = (value: string) =>
   value

@@ -352,6 +352,7 @@ const pageDescription = skill
 
 let skillRaw = "";
 let displayContent = "";
+let contentUnavailable = false;
 
 if (skill) {
   const registryEntry = getRegistryByPath(skill.pathSlug);
@@ -364,6 +365,7 @@ if (skill) {
         registryEntry.githubUrl,
       );
     } catch {
+      contentUnavailable = true;
       // Keep the page useful when a remote source is unavailable.
       displayContent = await renderSkillMarkdown(
         registryEntry.description,
@@ -553,9 +555,9 @@ const installCommand = (() => {
                       />
                     )}
                     <div class="flex min-w-0 flex-1 flex-col">
-                      <h2 class="type-h2 text-content-primary truncate">
+                      <h1 class="type-h2 text-content-primary truncate">
                         {skill.name}
-                      </h2>
+                      </h1>
                       {skillOwnerKey ? (
                         <a
                           href={`https://github.com/${skillOwnerKey}`}
@@ -596,14 +598,15 @@ const installCommand = (() => {
                 <Command command={installCommand} />
               </div>
 
+              {contentUnavailable && <p role="status" class="type-body-md rounded-lg border border-line-default p-3 text-content-secondary">The upstream skill source is currently unavailable. Only the catalog description is shown below. <a class="underline" href={getRegistryByPath(skill.pathSlug)?.githubUrl}>View the original repository</a></p>}
               <SkillContentCard
-                copyContent={skillRaw}
+                copyContent={skillRaw || skill.description || ""}
                 name={skill.name}
                 description={skill.description}
                 copyVariant="secondary"
                 dataEvent="install"
               >
-                <div set:html={displayContent} />
+                <div data-original-content lang="en" set:html={displayContent} />
               </SkillContentCard>
 
               {skillPlaybookEntries.length > 0 ? (

@@ -1,18 +1,14 @@
 import { defineConfig } from "astro/config";
-import cloudflare from "@astrojs/cloudflare";
+
 import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://www.ui-skills.com",
+  site: "https://ui-skills.wangruofeng007.com",
   trailingSlash: "ignore",
-  output: "server",
+  output: "static",
   session: false,
-  adapter: cloudflare({
-    imageService: "compile",
-    prerenderEnvironment: "node",
-  }),
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],

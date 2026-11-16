@@ -4,7 +4,7 @@ import { SEMI_STATIC_CACHE } from "../lib/cache-headers";
 
 export const prerender = true;
 
-const SITE_URL = "https://www.ui-skills.com";
+const SITE_URL = "https://ui-skills.wangruofeng007.com";
 
 export const GET: APIRoute = ({ site }) => {
   const origin = site?.origin ?? SITE_URL;
