@@ -26,7 +26,8 @@ export function translateText(value, dictionary) {
 }
 export function localizedHref(value, chinese) {
   if (!value?.startsWith('/') || value.startsWith('//')) return value;
-  if (/^\/(?:jobs|sponsor|oauth)(?:\/|$)|^\/mcp(?:\/rpc)?(?:[?#]|$)/.test(value)) return 'https://www.ui-skills.com' + value;
+  if (/^\/(?:jobs|sponsor|oauth)(?:\/|$)/.test(value)) return 'https://www.ui-skills.com' + value;
+  if (/^\/mcp(?:\/rpc)?\/?(?:[?#]|$)/.test(value)) return value;
   if (!chinese && !/^\/en(?:\/|$)/.test(value) && !/\.[a-z0-9]+(?:[/?#]|$)/i.test(value) && !/^\/(?:api|\.well-known)(?:\/|$)/.test(value)) return '/en' + value;
   return value;
 }

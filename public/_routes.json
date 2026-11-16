@@ -1,7 +1,11 @@
 {
   "version": 1,
   "include": [
-    "/api/*"
+    "/api/*",
+    "/mcp",
+    "/mcp/",
+    "/mcp/rpc",
+    "/mcp/rpc/"
   ],
   "exclude": []
 }

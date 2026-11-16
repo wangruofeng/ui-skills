@@ -1,39 +1,38 @@
-import type { APIRoute } from "astro";
-
 import {
-  defaultSkillContentLoader,
   getRegistrySkillByDiscoveryName,
   skillArtifactPath,
   toDiscoveryName,
-} from "./agent-skills-discovery";
+} from "./skill-discovery-paths";
 import { getSiteOrigin } from "./agent-discovery";
 import { registry } from "../data/registry";
 
 type JsonRpcRequest = {
   jsonrpc?: string;
-  id?: string | number | null;
+  id?: string | number;
   method?: string;
   params?: Record<string, unknown>;
 };
 
-const corsHeaders = {
+const responseHeaders = {
   "Content-Type": "application/json; charset=utf-8",
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Accept, MCP-Protocol-Version",
+  "Cache-Control": "no-store",
+  "X-Content-Type-Options": "nosniff",
 };
+
+const protocolVersions = ["2025-11-25", "2025-06-18", "2025-03-26"] as const;
+const allowedMethods = { Allow: "GET, POST, OPTIONS" };
 
 const MAX_REQUEST_BYTES = 64 * 1024;
 
 function jsonRpcResult(id: JsonRpcRequest["id"], result: unknown) {
   return new Response(
     JSON.stringify({ jsonrpc: "2.0", id: id ?? null, result }),
-    { headers: corsHeaders },
+    { headers: responseHeaders },
   );
 }
 
 function jsonRpcError(
-  id: JsonRpcRequest["id"],
+  id: JsonRpcRequest["id"] | null,
   code: number,
   message: string,
   status = 200,
@@ -44,7 +43,7 @@ function jsonRpcError(
       id: id ?? null,
       error: { code, message },
     }),
-    { status, headers: corsHeaders },
+    { status, headers: responseHeaders },
   );
 }
 
@@ -83,30 +82,36 @@ const tools = [
   },
 ];
 
-export const mcpOptions: APIRoute = () =>
-  new Response(null, { status: 204, headers: corsHeaders });
+export async function handleMcpRequest(
+  request: Request,
+  assets: { fetch(request: Request): Promise<Response> },
+) {
+  const requestOrigin = new URL(request.url).origin;
+  const origin = getSiteOrigin();
+  const callerOrigin = request.headers.get("Origin");
+  if (callerOrigin !== null && callerOrigin !== requestOrigin) {
+    return jsonRpcError(null, -32600, "Invalid Origin", 403);
+  }
 
-export const mcpGet: APIRoute = ({ site }) => {
-  const origin = getSiteOrigin(site);
-  const endpoint = `${origin}/mcp`;
-  return new Response(
-    JSON.stringify(
-      {
-        name: "UI Skills MCP",
-        version: "0.2.4",
-        protocol: "mcp",
-        endpoint,
-        registry: `${origin}/skills/registry.json`,
-        tools: tools.map((tool) => tool.name),
-      },
-      null,
-      2,
-    ),
-    { headers: corsHeaders },
-  );
-};
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: responseHeaders });
+  }
 
-export const mcpPost: APIRoute = async ({ request, site }) => {
+  if (request.method !== "POST") {
+    return new Response(null, {
+      status: 405,
+      headers: { ...responseHeaders, ...allowedMethods },
+    });
+  }
+
+  const version = request.headers.get("MCP-Protocol-Version");
+  if (
+    version !== null &&
+    !protocolVersions.some((supported) => supported === version)
+  ) {
+    return jsonRpcError(null, -32600, "Unsupported MCP protocol version", 400);
+  }
+
   const raw = await request.text();
   if (new TextEncoder().encode(raw).byteLength > MAX_REQUEST_BYTES) {
     return jsonRpcError(null, -32600, "Request body is too large", 413);
@@ -118,23 +123,33 @@ export const mcpPost: APIRoute = async ({ request, site }) => {
       body = parsed as JsonRpcRequest;
     }
   } catch {
-    body = null;
+    return jsonRpcError(null, -32700, "Parse error", 400);
   }
-  if (!body || body.jsonrpc !== "2.0" || typeof body.method !== "string") {
+  if (
+    !body ||
+    body.jsonrpc !== "2.0" ||
+    typeof body.method !== "string" ||
+    ("id" in body && typeof body.id !== "string" && typeof body.id !== "number")
+  ) {
     return jsonRpcError(null, -32600, "Invalid Request", 400);
   }
 
-  const origin = getSiteOrigin(site);
+  if (!("id" in body)) {
+    return new Response(null, { status: 202, headers: responseHeaders });
+  }
 
   switch (body.method) {
     case "initialize":
       return jsonRpcResult(body.id, {
-        protocolVersion: "2025-06-18",
+        protocolVersion:
+          protocolVersions.find(
+            (version) => version === body.params?.protocolVersion,
+          ) ?? protocolVersions[0],
         capabilities: { tools: {} },
         serverInfo: { name: "UI Skills", version: "0.2.4" },
       });
-    case "notifications/initialized":
-      return new Response(null, { status: 202, headers: corsHeaders });
+    case "ping":
+      return jsonRpcResult(body.id, {});
     case "tools/list":
       return jsonRpcResult(body.id, { tools });
     case "tools/call": {
@@ -196,7 +211,20 @@ export const mcpPost: APIRoute = async ({ request, site }) => {
         }
 
         try {
-          const content = await defaultSkillContentLoader(entry);
+          const artifact = await assets.fetch(
+            new Request(
+              new URL(skillArtifactPath(entry.pathSlug), requestOrigin),
+            ),
+          );
+          const content = await artifact.text();
+          // Static builds retain the body of a failed prerendered artifact.
+          if (
+            !artifact.ok ||
+            !artifact.headers.get("Content-Type")?.startsWith("text/plain") ||
+            content === "Skill source unavailable"
+          ) {
+            throw new Error("Skill artifact unavailable");
+          }
           return jsonRpcResult(body.id, {
             content: [{ type: "text", text: content }],
           });
@@ -218,4 +246,4 @@ export const mcpPost: APIRoute = async ({ request, site }) => {
     default:
       return jsonRpcError(body.id, -32601, `Method not found: ${body.method}`);
   }
-};
+}

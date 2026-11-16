@@ -7,7 +7,7 @@ const dictionary=JSON.parse(await readFile('public/i18n/zh-CN.json','utf8'));
 const text=value=>translateText(value,dictionary);
 const files=[];async function walk(dir){for(const e of await readdir(dir,{withFileTypes:true})){if(e.name==='en')continue;const f=path.join(dir,e.name);if(e.isDirectory())await walk(f);else if(f.endsWith('.html'))files.push(f);}}await walk('dist');
 const pages=new Set(files.filter(f=>!f.endsWith('/404.html')&&!f.startsWith('dist/agent/')&&!/^dist\/(?:login|library)(?:\/|\.)/.test(f)).map(f=>{let x='/'+path.relative('dist',f).replaceAll(path.sep,'/').replace(/index\.html$/,'').replace(/\.html$/,'');return x==='/'?'/':x.replace(/\/$/,'');}));
-const service=/^\/(?:jobs|sponsor|oauth)(?:\/|$)|^\/mcp(?:\/rpc)?$/;
+const service=/^\/(?:jobs|sponsor|oauth)(?:\/|$)/;
 function localizedLink(v,en){if(!v.startsWith('/')||v.startsWith('//'))return v;const [route]=v.split(/[?#]/);if(service.test(route))return 'https://www.ui-skills.com'+v;if(en&&(pages.has(route.replace(/\/$/,'')||'/')||/^\/(?:login|library)(?:\/|$)/.test(route)))return '/en'+v;return v;}
 for(const file of files){
  const original=await readFile(file,'utf8');const route='/'+path.relative('dist',file).replaceAll(path.sep,'/').replace(/index\.html$/,'').replace(/\.html$/,'').replace(/\/$/,'');const normalized=route||'/';
