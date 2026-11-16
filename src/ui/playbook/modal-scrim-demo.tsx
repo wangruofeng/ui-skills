@@ -1,10 +1,13 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { useState } from "react";
 import { cn } from "../../lib/cn";
 import { Button } from "../button";
 import { PlaybookSwitchRow } from "./demo-card";
 
 function SettingsPanel({ onOpen }: { onOpen: () => void }) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <div className="flex h-full flex-col items-center justify-center p-6">
       <p className="text-content-secondary text-center text-sm">
         Workspace settings
@@ -19,16 +22,18 @@ function SettingsPanel({ onOpen }: { onOpen: () => void }) {
       >
         Delete workspace
       </Button>
-    </div>
+    </div>,
   );
 }
 
 export default function ModalScrimDemo() {
+  const localizeUi = useUiTree();
+
   const [showTip, setShowTip] = useState(false);
   const [open, setOpen] = useState(false);
 
-  return (
-    <div className="border-line-default relative h-84 w-full max-w-3xl overflow-hidden rounded-none border-t border-b bg-surface-default shadow-2xs sm:h-88 sm:rounded-[8px] sm:border-none sm:shadow-2xs sm:ring-1 sm:ring-line-default">
+  return localizeUi(
+    <div className="border-line-default bg-surface-default sm:ring-line-default relative h-84 w-full max-w-3xl overflow-hidden rounded-none border-t border-b shadow-2xs sm:h-88 sm:rounded-[8px] sm:border-none sm:shadow-2xs sm:ring-1">
       <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-2 sm:top-5 sm:right-5">
         <PlaybookSwitchRow
           offLabel="Blur scrim"
@@ -48,12 +53,14 @@ export default function ModalScrimDemo() {
           <div
             className={cn(
               "absolute inset-0",
-              showTip ? "bg-fill-inverse/20" : "bg-fill-inverse/10 backdrop-blur-sm",
+              showTip
+                ? "bg-fill-inverse/20"
+                : "bg-fill-inverse/10 backdrop-blur-sm",
             )}
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
-          <div className="relative w-full max-w-xs rounded-xl bg-surface-default p-4 shadow-lg ring-1 ring-line-default">
+          <div className="bg-surface-default ring-line-default relative w-full max-w-xs rounded-xl p-4 shadow-lg ring-1">
             <p className="text-content-primary text-sm font-medium">
               Delete workspace?
             </p>
@@ -74,7 +81,7 @@ export default function ModalScrimDemo() {
                 type="button"
                 shape="round"
                 size="sm"
-                className="bg-red-600 text-content-inverse hover:bg-red-700"
+                className="text-content-inverse bg-red-600 hover:bg-red-700"
                 onClick={() => setOpen(false)}
               >
                 Delete
@@ -83,6 +90,6 @@ export default function ModalScrimDemo() {
           </div>
         </div>
       ) : null}
-    </div>
+    </div>,
   );
 }

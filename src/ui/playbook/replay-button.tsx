@@ -1,8 +1,11 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { useId, useState } from "react";
 import { Button } from "../button";
 
 function ReplayIcon() {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <svg
       viewBox="0 0 24 24"
       className="size-4"
@@ -17,7 +20,7 @@ function ReplayIcon() {
       <path d="M21 3v5h-5" />
       <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
       <path d="M3 21v-5h5" />
-    </svg>
+    </svg>,
   );
 }
 
@@ -28,10 +31,12 @@ export function ReplayButton({
   label: string;
   onClick: () => void;
 }) {
+  const localizeUi = useUiTree();
+
   const tooltipId = useId();
   const [showTooltip, setShowTooltip] = useState(false);
 
-  return (
+  return localizeUi(
     <div className="relative">
       <Button
         type="button"
@@ -52,11 +57,11 @@ export function ReplayButton({
         <span
           id={tooltipId}
           role="tooltip"
-          className="bg-fill-inverse pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 rounded-md px-2 py-1 text-xs whitespace-nowrap text-content-inverse"
+          className="bg-fill-inverse text-content-inverse pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 rounded-md px-2 py-1 text-xs whitespace-nowrap"
         >
           {label}
         </span>
       ) : null}
-    </div>
+    </div>,
   );
 }

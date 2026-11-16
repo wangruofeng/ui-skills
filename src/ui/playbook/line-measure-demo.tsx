@@ -1,17 +1,20 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { PlaybookDemoCard } from "./demo-card";
 
 const copy =
   "When every line stretches from edge to edge, reading feels like work. Your eye travels farther across each line, then jumps all the way back to start the next one. A shorter measure keeps the rhythm calm.";
 
 function MeasureText({ capped = false }: { capped?: boolean }) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <div className="w-[75ch] max-w-full text-left">
       <p
         className={`text-content-primary text-base leading-relaxed ${capped ? "max-w-[60ch]" : "w-full"}`}
       >
         {copy}
       </p>
-    </div>
+    </div>,
   );
 }
 

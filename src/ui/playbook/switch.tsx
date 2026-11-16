@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { cn } from "../../lib/cn";
 
 type PlaybookSwitchProps = {
@@ -15,7 +16,9 @@ export function PlaybookSwitch({
   className,
   "aria-label": ariaLabel = "Show tip",
 }: PlaybookSwitchProps) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <button
       type="button"
       id={id}
@@ -49,6 +52,6 @@ export function PlaybookSwitch({
           checked && "translate-x-4",
         )}
       />
-    </button>
+    </button>,
   );
 }

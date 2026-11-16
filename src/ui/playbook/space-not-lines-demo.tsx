@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { PlaybookDemoCard } from "./demo-card";
 
 const groups = [
@@ -6,12 +7,16 @@ const groups = [
 ];
 
 function SettingsList({ spaced = false }: { spaced?: boolean }) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <div className="w-56 text-left">
       <div className={spaced ? "space-y-8" : ""}>
         {groups.map((group) => (
           <div key={group.title} className={spaced ? "space-y-1" : ""}>
-            <p className="text-content-primary text-sm font-medium">{group.title}</p>
+            <p className="text-content-primary text-sm font-medium">
+              {group.title}
+            </p>
             {group.items.map((item) => (
               <p
                 key={item}
@@ -25,7 +30,7 @@ function SettingsList({ spaced = false }: { spaced?: boolean }) {
           </div>
         ))}
       </div>
-    </div>
+    </div>,
   );
 }
 

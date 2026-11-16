@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { Tooltip } from "./tooltip";
 
@@ -15,7 +16,9 @@ export default function IconLibraryActions({
   websiteUrl,
   githubUrl,
 }: Props) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <div className="flex shrink-0 items-center gap-1 self-center">
       <Tooltip content={`Open ${name} website`} side="top">
         <a
@@ -48,6 +51,6 @@ export default function IconLibraryActions({
           </a>
         </Tooltip>
       )}
-    </div>
+    </div>,
   );
 }

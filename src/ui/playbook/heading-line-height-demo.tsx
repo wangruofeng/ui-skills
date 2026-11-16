@@ -1,14 +1,17 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { PlaybookDemoCard } from "./demo-card";
 
 function HeroHeading({ tight = false }: { tight?: boolean }) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <h2
       className={`text-content-primary max-w-[16ch] text-3xl font-medium tracking-tight ${
         tight ? "leading-tight" : "leading-normal"
       }`}
     >
       Design details that compound into better interfaces
-    </h2>
+    </h2>,
   );
 }
 

@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import {
   AnimatePresence,
   motion,
@@ -23,6 +24,8 @@ export function TextMorph({
   variants,
   transition,
 }: TextMorphProps) {
+  const localizeUi = useUiTree();
+
   const uniqueId = useId();
   const Tag = Component as React.ComponentType<{
     className?: string;
@@ -58,8 +61,12 @@ export function TextMorph({
     mass: 0.3,
   };
 
-  return (
-    <Tag aria-label={children} className={className} style={style as React.CSSProperties}>
+  return localizeUi(
+    <Tag
+      aria-label={children}
+      className={className}
+      style={style as React.CSSProperties}
+    >
       <AnimatePresence mode="popLayout" initial={false}>
         {characters.map((character) => (
           <motion.span
@@ -77,6 +84,6 @@ export function TextMorph({
           </motion.span>
         ))}
       </AnimatePresence>
-    </Tag>
+    </Tag>,
   );
 }

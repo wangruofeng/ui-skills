@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import { AlertDialog } from "@base-ui/react/alert-dialog";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
@@ -16,11 +17,13 @@ export function DeleteCollectionButton({
   collectionId,
   title,
 }: DeleteCollectionButtonProps) {
+  const localizeUi = useUiTree();
+
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
-  return (
+  return localizeUi(
     <AlertDialog.Root
       onOpenChangeComplete={(open) => {
         if (open || document.activeElement !== triggerRef.current) return;
@@ -68,7 +71,7 @@ export function DeleteCollectionButton({
               type="button"
               className={cn(
                 controlClass,
-                "border-transparent bg-fill-inverse text-content-inverse",
+                "bg-fill-inverse text-content-inverse border-transparent",
               )}
               disabled={pending}
               aria-busy={pending}
@@ -95,6 +98,6 @@ export function DeleteCollectionButton({
           </div>
         </AlertDialog.Popup>
       </AlertDialog.Portal>
-    </AlertDialog.Root>
+    </AlertDialog.Root>,
   );
 }

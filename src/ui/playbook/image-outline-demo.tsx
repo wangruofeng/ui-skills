@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { PlaybookDemoCard } from "./demo-card";
 import { useState } from "react";
 
@@ -5,9 +6,11 @@ const imageUrl =
   "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Claude_Monet_-_Regnv%C3%A6r%2C_Etretat_-_Google_Art_Project.jpg/1920px-Claude_Monet_-_Regnv%C3%A6r%2C_Etretat_-_Google_Art_Project.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail&_=20131124234031";
 
 function PhotoCard({ cleanOutline = false }: { cleanOutline?: boolean }) {
+  const localizeUi = useUiTree();
+
   const [failed, setFailed] = useState(false);
 
-  return (
+  return localizeUi(
     <div className="w-48">
       <div
         className={`overflow-hidden rounded-lg ${cleanOutline ? "outline-content-extra-muted outline outline-1" : "ring-content-muted ring-2"}`}
@@ -33,7 +36,7 @@ function PhotoCard({ cleanOutline = false }: { cleanOutline?: boolean }) {
       <p className="text-content-primary mt-2 text-sm font-medium">
         Rainy Weather, Étretat
       </p>
-    </div>
+    </div>,
   );
 }
 

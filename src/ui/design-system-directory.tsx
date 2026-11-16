@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import githubMetadata from "../data/github-metadata.json";
 import {
   designSystemCollections,
@@ -38,19 +39,21 @@ export default function DesignSystemDirectory({
   systems,
   showCollectionHeaders = true,
 }: Props) {
+  const localizeUi = useUiTree();
+
   if (!showCollectionHeaders) {
-    return (
+    return localizeUi(
       <TooltipProvider>
         <div>
           {systems.map((system) => (
             <SystemRow key={system.name} system={system} headingLevel="h2" />
           ))}
         </div>
-      </TooltipProvider>
+      </TooltipProvider>,
     );
   }
 
-  return (
+  return localizeUi(
     <TooltipProvider>
       <div className="flex flex-col gap-10">
         {designSystemCollections.map((collection) => {
@@ -90,7 +93,7 @@ export default function DesignSystemDirectory({
           );
         })}
       </div>
-    </TooltipProvider>
+    </TooltipProvider>,
   );
 }
 
@@ -101,6 +104,8 @@ function SystemRow({
   system: DesignSystem;
   headingLevel: "h2" | "h3";
 }) {
+  const localizeUi = useUiTree();
+
   const repository = system.githubRepo
     ? repositoryMetadata.repositories[system.githubRepo.toLowerCase()]
     : undefined;
@@ -119,7 +124,7 @@ function SystemRow({
     : `Open ${system.name} website`;
   const Heading = headingLevel;
 
-  return (
+  return localizeUi(
     <article className="border-line-default flex items-start gap-3 border-b py-4 sm:items-center">
       <a href={avatarHref} aria-label={avatarLabel} className="shrink-0">
         <img
@@ -138,7 +143,7 @@ function SystemRow({
         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
           <Heading className="type-body-md text-content-primary truncate font-[450]">
             <a
-              href={system.websiteUrl}
+              href={system.websiteUrl} translate="no"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:underline"
@@ -172,6 +177,6 @@ function SystemRow({
             : undefined
         }
       />
-    </article>
+    </article>,
   );
 }

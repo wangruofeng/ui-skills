@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import { useState } from "react";
 import { CheckIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 
@@ -27,6 +28,8 @@ export function CopyButton({
   variant = "ghost",
   ...props
 }: CopyButtonProps) {
+  const localizeUi = useUiTree();
+
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -38,7 +41,10 @@ export function CopyButton({
         await Promise.race([
           navigator.clipboard.writeText(content),
           new Promise((_, reject) =>
-            window.setTimeout(() => reject(new Error("Clipboard timeout")), 500),
+            window.setTimeout(
+              () => reject(new Error("Clipboard timeout")),
+              500,
+            ),
           ),
         ]);
       } else {
@@ -53,11 +59,11 @@ export function CopyButton({
     }
   };
 
-  return (
+  return localizeUi(
     <button
       onClick={handleCopy}
       type="button"
-      className={`type-body-md ${showText ? "h-7 px-2" : "size-7"} flex items-center justify-center gap-1 rounded-lg transition-[background-color,color] duration-150 ease-out ${variant === "secondary" ? "border border-line-default bg-fill-default text-content-primary hover:bg-fill-subtle" : "border border-transparent text-content-secondary hover:bg-fill-strong hover:text-content-primary"} ${className ?? ""}`}
+      className={`type-body-md ${showText ? "h-7 px-2" : "size-7"} flex items-center justify-center gap-1 rounded-lg transition-[background-color,color] duration-150 ease-out ${variant === "secondary" ? "border-line-default bg-fill-default text-content-primary hover:bg-fill-subtle border" : "text-content-secondary hover:bg-fill-strong hover:text-content-primary border border-transparent"} ${className ?? ""}`}
       aria-label="Copy to clipboard"
       {...props}
     >
@@ -71,10 +77,10 @@ export function CopyButton({
           <span className="font-medium">{isCopied ? "Copied" : "Copy"}</span>
         </>
       ) : isCopied ? (
-          <CheckIcon className="size-4" aria-hidden="true" />
-        ) : (
-          <DocumentDuplicateIcon className="size-4" aria-hidden="true" />
+        <CheckIcon className="size-4" aria-hidden="true" />
+      ) : (
+        <DocumentDuplicateIcon className="size-4" aria-hidden="true" />
       )}
-    </button>
+    </button>,
   );
 }

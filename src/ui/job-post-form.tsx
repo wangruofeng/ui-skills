@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import {
   useEffect,
   useRef,
@@ -66,6 +67,8 @@ export default function JobPostForm({
   apiUrl,
   turnstileSiteKey,
 }: JobPostFormProps) {
+  const localizeUi = useUiTree();
+
   const turnstileEnabled = import.meta.env.PROD;
   const [values, setValues] = useState(initialValues);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -221,7 +224,7 @@ export default function JobPostForm({
     }
   }
 
-  return (
+  return localizeUi(
     <form
       className="flex flex-col gap-10"
       onSubmit={handleSubmit}
@@ -323,6 +326,6 @@ export default function JobPostForm({
           <ArrowRightIcon className="ml-1.5 size-4" aria-hidden="true" />
         </button>
       </div>
-    </form>
+    </form>,
   );
 }

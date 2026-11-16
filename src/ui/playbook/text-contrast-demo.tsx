@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { PlaybookDemoCard } from "./demo-card";
 
 const items = [
@@ -6,11 +7,15 @@ const items = [
 ];
 
 function SettingsList({ readable = false }: { readable?: boolean }) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <div className="w-72 space-y-4 text-left">
       {items.map((item) => (
         <div key={item.title}>
-          <p className="text-content-primary text-sm font-medium">{item.title}</p>
+          <p className="text-content-primary text-sm font-medium">
+            {item.title}
+          </p>
           <p
             className={`mt-0.5 text-sm ${readable ? "text-content-secondary" : "text-content-extra-muted"}`}
           >
@@ -18,7 +23,7 @@ function SettingsList({ readable = false }: { readable?: boolean }) {
           </p>
         </div>
       ))}
-    </div>
+    </div>,
   );
 }
 

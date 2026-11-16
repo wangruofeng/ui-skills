@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { useState, type ReactNode } from "react";
 import { cn } from "../../lib/cn";
 import { PlaybookSwitch } from "./switch";
@@ -24,9 +25,11 @@ export function PlaybookSwitchRow({
   "aria-label": ariaLabel,
   layout = "row",
 }: PlaybookSwitchRowProps) {
+  const localizeUi = useUiTree();
+
   const isGrid = layout === "grid";
 
-  return (
+  return localizeUi(
     <div
       className={cn(isGrid ? "contents" : "flex items-center gap-2.5")}
       role="group"
@@ -63,7 +66,7 @@ export function PlaybookSwitchRow({
       >
         {onLabel}
       </button>
-    </div>
+    </div>,
   );
 }
 
@@ -90,6 +93,8 @@ export function PlaybookDemoCard({
   without,
   with: withContent,
 }: PlaybookDemoCardProps) {
+  const localizeUi = useUiTree();
+
   const [showTip, setShowTip] = useState(false);
   const resolvedContentClassName =
     contentClassName ?? (flush ? "h-full w-full" : "w-full max-w-2xl");
@@ -122,10 +127,10 @@ export function PlaybookDemoCard({
       </div>
     );
 
-  return (
+  return localizeUi(
     <div
       className={cn(
-        "border-line-default relative h-84 w-full max-w-3xl rounded-none border-t border-b bg-surface-default py-3.5 pt-6 pr-4 pl-6 shadow-2xs sm:h-88 sm:rounded-[8px] sm:border-none sm:shadow-2xs sm:ring-1 sm:ring-line-default",
+        "border-line-default bg-surface-default sm:ring-line-default relative h-84 w-full max-w-3xl rounded-none border-t border-b py-3.5 pt-6 pr-4 pl-6 shadow-2xs sm:h-88 sm:rounded-[8px] sm:border-none sm:shadow-2xs sm:ring-1",
         flush ? "overflow-hidden p-0" : "",
       )}
     >
@@ -145,6 +150,6 @@ export function PlaybookDemoCard({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
   );
 }

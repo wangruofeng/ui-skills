@@ -1,11 +1,14 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { Button } from "../button";
 import { PlaybookDemoCard } from "./demo-card";
 
 const compactButtonClass = "rounded-lg px-3.5 py-1.5 text-xs font-medium";
 
 function ActionRow({ singleAccent = false }: { singleAccent?: boolean }) {
+  const localizeUi = useUiTree();
+
   if (singleAccent) {
-    return (
+    return localizeUi(
       <div className="flex flex-wrap items-center justify-center gap-2">
         <Button variant="accent" size="sm">
           Save
@@ -16,22 +19,31 @@ function ActionRow({ singleAccent = false }: { singleAccent?: boolean }) {
         <Button variant="ghost" size="sm">
           Share
         </Button>
-      </div>
+      </div>,
     );
   }
 
-  return (
+  return localizeUi(
     <div className="flex flex-wrap items-center justify-center gap-2">
-      <button type="button" className={`${compactButtonClass} bg-content-accent text-content-inverse`}>
+      <button
+        type="button"
+        className={`${compactButtonClass} bg-content-accent text-content-inverse`}
+      >
         Save
       </button>
-      <button type="button" className={`${compactButtonClass} bg-emerald-600 text-content-inverse`}>
+      <button
+        type="button"
+        className={`${compactButtonClass} text-content-inverse bg-emerald-600`}
+      >
         Publish
       </button>
-      <button type="button" className={`${compactButtonClass} bg-orange-500 text-content-inverse`}>
+      <button
+        type="button"
+        className={`${compactButtonClass} text-content-inverse bg-orange-500`}
+      >
         Share
       </button>
-    </div>
+    </div>,
   );
 }
 

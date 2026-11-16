@@ -1,8 +1,11 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { useId } from "react";
 import { Input } from "../input";
 import { PlaybookDemoCard } from "./demo-card";
 
 function ProfileForm({ sentenceCase = false }: { sentenceCase?: boolean }) {
+  const localizeUi = useUiTree();
+
   const nameId = useId();
   const emailId = useId();
 
@@ -10,7 +13,7 @@ function ProfileForm({ sentenceCase = false }: { sentenceCase?: boolean }) {
     ? "text-content-primary text-sm font-medium"
     : "text-content-primary text-xs font-semibold tracking-wide uppercase";
 
-  return (
+  return localizeUi(
     <div className="w-56 space-y-4 text-left">
       <div>
         <label htmlFor={nameId} className={labelClass}>
@@ -22,9 +25,14 @@ function ProfileForm({ sentenceCase = false }: { sentenceCase?: boolean }) {
         <label htmlFor={emailId} className={labelClass}>
           Email address
         </label>
-        <Input id={emailId} type="email" defaultValue="alex@example.com" className="mt-1.5" />
+        <Input
+          id={emailId}
+          type="email"
+          defaultValue="alex@example.com"
+          className="mt-1.5"
+        />
       </div>
-    </div>
+    </div>,
   );
 }
 

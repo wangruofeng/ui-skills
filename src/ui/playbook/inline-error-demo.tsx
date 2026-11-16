@@ -1,16 +1,22 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { useId } from "react";
 import { Input } from "../input";
 import { PlaybookDemoCard } from "./demo-card";
 
 function SignInForm({ inlineError = false }: { inlineError?: boolean }) {
+  const localizeUi = useUiTree();
+
   const emailId = useId();
   const passwordId = useId();
   const errorId = useId();
 
-  return (
+  return localizeUi(
     <div className="w-56 text-left">
       <div>
-        <label htmlFor={emailId} className="text-content-primary text-sm font-medium">
+        <label
+          htmlFor={emailId}
+          className="text-content-primary text-sm font-medium"
+        >
           Email
         </label>
         <Input
@@ -22,14 +28,17 @@ function SignInForm({ inlineError = false }: { inlineError?: boolean }) {
           className="mt-1.5"
         />
         {inlineError ? (
-          <p id={errorId} className="text-red-600 mt-1.5 text-xs">
+          <p id={errorId} className="mt-1.5 text-xs text-red-600">
             Enter a valid email address
           </p>
         ) : null}
       </div>
 
       <div className="mt-4">
-        <label htmlFor={passwordId} className="text-content-primary text-sm font-medium">
+        <label
+          htmlFor={passwordId}
+          className="text-content-primary text-sm font-medium"
+        >
           Password
         </label>
         <Input
@@ -41,9 +50,9 @@ function SignInForm({ inlineError = false }: { inlineError?: boolean }) {
       </div>
 
       {!inlineError ? (
-        <p className="text-red-600 mt-6 text-xs">Enter a valid email address</p>
+        <p className="mt-6 text-xs text-red-600">Enter a valid email address</p>
       ) : null}
-    </div>
+    </div>,
   );
 }
 

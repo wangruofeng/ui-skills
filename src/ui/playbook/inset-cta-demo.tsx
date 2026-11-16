@@ -1,9 +1,12 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { Button } from "../button";
 import { PlaybookDemoCard } from "./demo-card";
 
 function MobileSheet({ inset = false }: { inset?: boolean }) {
-  return (
-    <div className="w-56 overflow-hidden rounded-xl bg-surface-default shadow-sm ring-1 ring-line-default">
+  const localizeUi = useUiTree();
+
+  return localizeUi(
+    <div className="bg-surface-default ring-line-default w-56 overflow-hidden rounded-xl shadow-sm ring-1">
       <div className="text-content-secondary space-y-1 px-4 py-4 text-sm">
         <p className="text-content-primary font-medium">Upgrade to Pro</p>
         <p>Unlock exports and shared libraries.</p>
@@ -19,7 +22,7 @@ function MobileSheet({ inset = false }: { inset?: boolean }) {
           Start free trial
         </Button>
       )}
-    </div>
+    </div>,
   );
 }
 

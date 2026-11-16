@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { useEffect, useState } from "react";
 import { PlaybookDemoCard } from "./demo-card";
 import { ReplayButton } from "./replay-button";
@@ -6,6 +7,8 @@ const paintingUrl =
   "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Claude_Monet%2C_Impression%2C_soleil_levant.jpg/960px-Claude_Monet%2C_Impression%2C_soleil_levant.jpg";
 
 function PaintingCard({ stable, replay }: { stable: boolean; replay: number }) {
+  const localizeUi = useUiTree();
+
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
 
@@ -16,7 +19,7 @@ function PaintingCard({ stable, replay }: { stable: boolean; replay: number }) {
     return () => window.clearTimeout(timer);
   }, [replay]);
 
-  return (
+  return localizeUi(
     <div className="w-40 text-left">
       <div
         className={
@@ -53,7 +56,7 @@ function PaintingCard({ stable, replay }: { stable: boolean; replay: number }) {
       <p className="text-content-primary mt-2 text-sm font-medium">
         Impression, Sunrise
       </p>
-    </div>
+    </div>,
   );
 }
 
@@ -71,16 +74,14 @@ export default function AspectRatioDemo() {
         />
       }
       contentClassName="flex w-full justify-center"
-       without={
-         <PaintingCard
-           key="without-aspect-ratio"
-           stable={false}
-           replay={replay}
-         />
-       }
-       with={
-         <PaintingCard key="with-aspect-ratio" stable replay={replay} />
-       }
+      without={
+        <PaintingCard
+          key="without-aspect-ratio"
+          stable={false}
+          replay={replay}
+        />
+      }
+      with={<PaintingCard key="with-aspect-ratio" stable replay={replay} />}
     />
   );
 }

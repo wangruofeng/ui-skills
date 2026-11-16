@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { Button } from "../button";
@@ -17,7 +18,9 @@ function HeroEnter({
   staggered?: boolean;
   animationKey?: number;
 }) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <motion.div
       key={animationKey}
       initial="hidden"
@@ -43,7 +46,7 @@ function HeroEnter({
           Open library
         </Button>
       </motion.div>
-    </motion.div>
+    </motion.div>,
   );
 }
 

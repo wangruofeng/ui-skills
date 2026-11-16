@@ -1,12 +1,15 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { cn } from "../../lib/cn";
 import { PlaybookDemoCard } from "./demo-card";
 
 function NotificationsToggle({ useSpring = false }: { useSpring?: boolean }) {
+  const localizeUi = useUiTree();
+
   const [on, setOn] = useState(false);
 
-  return (
+  return localizeUi(
     <button
       type="button"
       role="switch"
@@ -19,7 +22,7 @@ function NotificationsToggle({ useSpring = false }: { useSpring?: boolean }) {
     >
       <motion.span
         aria-hidden="true"
-        className="absolute top-0.5 left-0.5 size-6 rounded-full bg-surface-default shadow-sm"
+        className="bg-surface-default absolute top-0.5 left-0.5 size-6 rounded-full shadow-sm"
         animate={{ x: on ? 20 : 0 }}
         transition={
           useSpring
@@ -28,7 +31,7 @@ function NotificationsToggle({ useSpring = false }: { useSpring?: boolean }) {
         }
       />
       <span className="sr-only">Notifications</span>
-    </button>
+    </button>,
   );
 }
 

@@ -1,9 +1,12 @@
+import { useUiTree } from "../../lib/ui-localization";
 import type { SVGProps } from "react";
 import { Button } from "../button";
 import { PlaybookDemoCard } from "./demo-card";
 
 function ChevronLeftIcon(props: SVGProps<SVGSVGElement>) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <svg
       viewBox="0 0 16 16"
       fill="none"
@@ -15,16 +18,18 @@ function ChevronLeftIcon(props: SVGProps<SVGSVGElement>) {
       {...props}
     >
       <path d="m10 12-4-4 4-4" />
-    </svg>
+    </svg>,
   );
 }
 
 function GoBackButton({ optical = false }: { optical?: boolean }) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <Button variant="primary" shape="round">
       <ChevronLeftIcon {...(optical ? { "data-icon": "inline-start" } : {})} />
       Go back
-    </Button>
+    </Button>,
   );
 }
 

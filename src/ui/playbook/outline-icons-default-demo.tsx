@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { useState } from "react";
 import { cn } from "../../lib/cn";
 import { PlaybookDemoCard } from "./demo-card";
@@ -6,15 +7,22 @@ type TabId = "home" | "profile";
 type IconVariant = "outline" | "filled";
 
 function HomeIcon({ variant = "outline" }: { variant?: IconVariant }) {
+  const localizeUi = useUiTree();
+
   if (variant === "filled") {
-    return (
-      <svg viewBox="0 0 24 24" className="size-5" fill="currentColor" aria-hidden="true">
+    return localizeUi(
+      <svg
+        viewBox="0 0 24 24"
+        className="size-5"
+        fill="currentColor"
+        aria-hidden="true"
+      >
         <path d="M12 3 3 10.2V20a1 1 0 0 0 1 1h5v-6h6v6h5a1 1 0 0 0 1-1v-9.8L12 3Z" />
-      </svg>
+      </svg>,
     );
   }
 
-  return (
+  return localizeUi(
     <svg
       viewBox="0 0 24 24"
       className="size-5"
@@ -28,20 +36,27 @@ function HomeIcon({ variant = "outline" }: { variant?: IconVariant }) {
         strokeLinejoin="round"
         d="m3 10.5 9-7 9 7M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"
       />
-    </svg>
+    </svg>,
   );
 }
 
 function ProfileIcon({ variant = "outline" }: { variant?: IconVariant }) {
+  const localizeUi = useUiTree();
+
   if (variant === "filled") {
-    return (
-      <svg viewBox="0 0 24 24" className="size-5" fill="currentColor" aria-hidden="true">
+    return localizeUi(
+      <svg
+        viewBox="0 0 24 24"
+        className="size-5"
+        fill="currentColor"
+        aria-hidden="true"
+      >
         <path d="M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm-7 18a7 7 0 0 1 14 0v1H5v-1Z" />
-      </svg>
+      </svg>,
     );
   }
 
-  return (
+  return localizeUi(
     <svg
       viewBox="0 0 24 24"
       className="size-5"
@@ -52,7 +67,7 @@ function ProfileIcon({ variant = "outline" }: { variant?: IconVariant }) {
     >
       <circle cx="12" cy="8" r="3.75" />
       <path strokeLinecap="round" d="M5.5 20.25a6.5 6.5 0 0 1 13 0" />
-    </svg>
+    </svg>,
   );
 }
 
@@ -70,11 +85,21 @@ function TabBar({
   onActiveTabChange: (tab: TabId) => void;
   outlineDefault?: boolean;
 }) {
-  return (
-    <div className="flex w-52 items-center justify-around" role="tablist" aria-label="Demo tabs">
+  const localizeUi = useUiTree();
+
+  return localizeUi(
+    <div
+      className="flex w-52 items-center justify-around"
+      role="tablist"
+      aria-label="Demo tabs"
+    >
       {tabs.map(({ id, label, Icon }) => {
         const active = activeTab === id;
-        const variant = outlineDefault ? (active ? "filled" : "outline") : "filled";
+        const variant = outlineDefault
+          ? active
+            ? "filled"
+            : "outline"
+          : "filled";
 
         return (
           <button
@@ -85,7 +110,9 @@ function TabBar({
             onClick={() => onActiveTabChange(id)}
             className={cn(
               "flex flex-col items-center gap-1 rounded-md px-3 py-1 transition-colors",
-              active ? "text-content-primary" : "text-content-muted hover:text-content-secondary",
+              active
+                ? "text-content-primary"
+                : "text-content-muted hover:text-content-secondary",
             )}
           >
             <Icon variant={variant} />
@@ -93,7 +120,7 @@ function TabBar({
           </button>
         );
       })}
-    </div>
+    </div>,
   );
 }
 
@@ -105,8 +132,16 @@ export default function OutlineIconsDefaultDemo() {
       withoutLabel="All filled"
       withLabel="Outline default"
       contentClassName="flex w-full justify-center"
-      without={<TabBar activeTab={activeTab} onActiveTabChange={setActiveTab} />}
-      with={<TabBar activeTab={activeTab} onActiveTabChange={setActiveTab} outlineDefault />}
+      without={
+        <TabBar activeTab={activeTab} onActiveTabChange={setActiveTab} />
+      }
+      with={
+        <TabBar
+          activeTab={activeTab}
+          onActiveTabChange={setActiveTab}
+          outlineDefault
+        />
+      }
     />
   );
 }

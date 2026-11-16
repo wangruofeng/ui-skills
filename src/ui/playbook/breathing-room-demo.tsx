@@ -1,8 +1,11 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { Button } from "../button";
 import { PlaybookDemoCard } from "./demo-card";
 
 function ActionPair({ spaced = false }: { spaced?: boolean }) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <div className={`flex ${spaced ? "gap-3" : "gap-1"}`}>
       <Button variant="outline" shape="round" size="sm">
         Edit
@@ -10,7 +13,7 @@ function ActionPair({ spaced = false }: { spaced?: boolean }) {
       <Button variant="outline" shape="round" size="sm">
         Share
       </Button>
-    </div>
+    </div>,
   );
 }
 

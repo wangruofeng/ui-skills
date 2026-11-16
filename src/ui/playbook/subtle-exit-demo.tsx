@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useId, useState } from "react";
 import { Button } from "../button";
@@ -8,7 +9,9 @@ const subtleExitTransition = { duration: 0.15, ease: "easeOut" as const };
 const dramaticExitTransition = { duration: 0.4, ease: "easeOut" as const };
 
 function CheckIcon() {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <svg
       viewBox="0 0 16 16"
       className="size-3.5 shrink-0"
@@ -20,11 +23,13 @@ function CheckIcon() {
       aria-hidden="true"
     >
       <path d="M3.5 8.5 6.5 11.5 12.5 4.5" />
-    </svg>
+    </svg>,
   );
 }
 
 function SaveToastDemo({ subtleExit = false }: { subtleExit?: boolean }) {
+  const localizeUi = useUiTree();
+
   const toastId = useId();
   const [toastVisible, setToastVisible] = useState(false);
 
@@ -35,7 +40,7 @@ function SaveToastDemo({ subtleExit = false }: { subtleExit?: boolean }) {
     return () => window.clearTimeout(timer);
   }, [toastVisible]);
 
-  return (
+  return localizeUi(
     <div className="flex h-full flex-col items-center justify-center">
       <Button
         shape="round"
@@ -74,7 +79,7 @@ function SaveToastDemo({ subtleExit = false }: { subtleExit?: boolean }) {
               }
               style={{ transformOrigin: "top center" }}
               id={toastId}
-              className="bg-fill-inverse absolute top-0 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-lg px-3.5 py-2 text-sm whitespace-nowrap text-content-inverse shadow-lg"
+              className="bg-fill-inverse text-content-inverse absolute top-0 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-lg px-3.5 py-2 text-sm whitespace-nowrap shadow-lg"
             >
               <CheckIcon />
               Saved to library
@@ -82,7 +87,7 @@ function SaveToastDemo({ subtleExit = false }: { subtleExit?: boolean }) {
           ) : null}
         </AnimatePresence>
       </div>
-    </div>
+    </div>,
   );
 }
 

@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { PlaybookDemoCard } from "./demo-card";
 
 type StatusRowProps = {
@@ -15,28 +16,36 @@ function StatusDot({ status }: { status: "paid" | "failed" }) {
 }
 
 function StatusRow({ labeled = false, status }: StatusRowProps) {
+  const localizeUi = useUiTree();
+
   const label = status === "paid" ? "Paid" : "Failed";
 
-  return (
-    <div className="flex w-56 items-center justify-between rounded-lg bg-surface-default px-4 py-3 ring-1 ring-line-default">
+  return localizeUi(
+    <div className="bg-surface-default ring-line-default flex w-56 items-center justify-between rounded-lg px-4 py-3 ring-1">
       <div>
-        <p className="text-content-primary text-sm font-medium">Invoice #1042</p>
+        <p className="text-content-primary text-sm font-medium">
+          Invoice #1042
+        </p>
         <p className="text-content-secondary text-sm">$248.00</p>
       </div>
       <div className="flex items-center gap-2">
         <StatusDot status={status} />
-        {labeled ? <span className="text-content-primary text-sm">{label}</span> : null}
+        {labeled ? (
+          <span className="text-content-primary text-sm">{label}</span>
+        ) : null}
       </div>
-    </div>
+    </div>,
   );
 }
 
 function StatusList({ labeled = false }: { labeled?: boolean }) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <div className="space-y-3">
       <StatusRow labeled={labeled} status="paid" />
       <StatusRow labeled={labeled} status="failed" />
-    </div>
+    </div>,
   );
 }
 

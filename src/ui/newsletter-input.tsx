@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowPathIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
@@ -16,7 +17,9 @@ function LoaderIcon({
   className?: string;
   size?: number;
 }) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <motion.span
       animate={{ rotate: 360 }}
       transition={{
@@ -27,8 +30,13 @@ function LoaderIcon({
       className={className}
       style={{ display: "inline-flex" }}
     >
-      <ArrowPathIcon className="size-4" width={size} height={size} aria-hidden="true" />
-    </motion.span>
+      <ArrowPathIcon
+        className="size-4"
+        width={size}
+        height={size}
+        aria-hidden="true"
+      />
+    </motion.span>,
   );
 }
 
@@ -38,6 +46,8 @@ export default function NewsletterInput({
   placeholder = "Enter your email",
   buttonLabel = "Subscribe",
 }: Props) {
+  const localizeUi = useUiTree();
+
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "subscribing" | "subscribed">(
     "idle",
@@ -95,15 +105,15 @@ export default function NewsletterInput({
     }
   };
 
-  return (
+  return localizeUi(
     <div className="pt-16 sm:pt-20" data-newsletter-widget>
       <hr className="border-line-default border-px mx-auto w-1/4 pb-16 sm:pb-20" />
       <div className="container-3xl">
         <div className="mx-auto w-full max-w-xl">
-          <h2 className="type-body-md w-full text-content-primary text-center font-medium text-balance">
+          <h2 className="type-body-md text-content-primary w-full text-center font-medium text-balance">
             {title}
           </h2>
-          <p className="type-body-md w-full text-content-secondary mt-0.5 text-center text-pretty">
+          <p className="type-body-md text-content-secondary mt-0.5 w-full text-center text-pretty">
             {description}
           </p>
         </div>
@@ -143,15 +153,16 @@ export default function NewsletterInput({
                   void submit();
                 }
               }}
-              className="type-body-md text-content-primary placeholder:type-body-md placeholder:text-content-muted focus:border-[#A5A5A5]/40 relative z-0 h-12 w-full rounded-full border border-line-default bg-white px-4 pr-36 transition-colors outline-none"
+              className="type-body-md text-content-primary placeholder:type-body-md placeholder:text-content-muted border-line-default relative z-0 h-12 w-full rounded-full border bg-white px-4 pr-36 transition-colors outline-none focus:border-[#A5A5A5]/40"
             />
 
             <button
               type="button"
               disabled={status !== "idle"}
               onClick={() => void submit()}
-              className={`type-body-md bg-fill-inverse text-content-inverse hover:bg-fill-inverse focus-visible:outline-content-primary disabled:hover:bg-fill-inverse absolute top-1/2 right-1 z-10 inline-flex h-10 min-w-[112px] -translate-y-1/2 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent px-5 transition-[opacity,background-color] duration-150 ease-out focus-visible:outline focus-visible:outline-offset-2 disabled:cursor-not-allowed ${status === "subscribing" ? "opacity-70" : "opacity-100"
-                }`}
+              className={`type-body-md bg-fill-inverse text-content-inverse hover:bg-fill-inverse focus-visible:outline-content-primary disabled:hover:bg-fill-inverse absolute top-1/2 right-1 z-10 inline-flex h-10 min-w-[112px] -translate-y-1/2 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent px-5 transition-[opacity,background-color] duration-150 ease-out focus-visible:outline focus-visible:outline-offset-2 disabled:cursor-not-allowed ${
+                status === "subscribing" ? "opacity-70" : "opacity-100"
+              }`}
             >
               <AnimatePresence mode="popLayout" initial={false}>
                 {status === "idle" ? (
@@ -189,7 +200,10 @@ export default function NewsletterInput({
                     transition={{ duration: 0.14, ease: "easeOut" }}
                     className="pointer-events-none inline-flex items-center whitespace-nowrap"
                   >
-                    <CheckCircleIcon className="size-4 shrink-0" aria-hidden="true" />
+                    <CheckCircleIcon
+                      className="size-4 shrink-0"
+                      aria-hidden="true"
+                    />
                   </motion.span>
                 ) : null}
               </AnimatePresence>
@@ -203,6 +217,6 @@ export default function NewsletterInput({
           ) : null}
         </div>
       </div>
-    </div>
+    </div>,
   );
 }

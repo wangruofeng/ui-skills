@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { cn } from "../../lib/cn";
 import { PlaybookDemoCard } from "./demo-card";
 
@@ -9,9 +10,11 @@ const topics = [
 ];
 
 function Phone({ peek = false }: { peek?: boolean }) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <div className="absolute inset-x-0 bottom-0 flex justify-center">
-      <div className="border-line-default flex h-56 w-[18.5rem] flex-col overflow-hidden rounded-t-[2rem] border border-b-0 bg-surface-default">
+      <div className="border-line-default bg-surface-default flex h-56 w-[18.5rem] flex-col overflow-hidden rounded-t-[2rem] border border-b-0">
         <div className="mt-auto pb-5">
           <div
             className="scrollbar-none overflow-x-auto"
@@ -23,7 +26,7 @@ function Phone({ peek = false }: { peek?: boolean }) {
                 <article
                   key={topic.name}
                   className={cn(
-                    "border-line-default flex shrink-0 flex-col justify-between rounded-xl border bg-surface-default p-3",
+                    "border-line-default bg-surface-default flex shrink-0 flex-col justify-between rounded-xl border p-3",
                     peek ? "w-40" : "w-64",
                   )}
                 >
@@ -39,7 +42,7 @@ function Phone({ peek = false }: { peek?: boolean }) {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
   );
 }
 

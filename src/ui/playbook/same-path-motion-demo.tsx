@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { Button } from "../button";
@@ -7,9 +8,11 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 const TRANSITION = { duration: 0.28, ease: EASE };
 
 function ToastDemo({ samePath = false }: { samePath?: boolean }) {
+  const localizeUi = useUiTree();
+
   const [open, setOpen] = useState(false);
 
-  return (
+  return localizeUi(
     <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
       <Button
         type="button"
@@ -31,14 +34,18 @@ function ToastDemo({ samePath = false }: { samePath?: boolean }) {
                 ? { opacity: 0, y: 28, transition: TRANSITION }
                 : { opacity: 0, x: 40, transition: TRANSITION }
             }
-            className="absolute right-5 bottom-5 w-48 rounded-xl bg-surface-default p-3 shadow-lg ring-1 ring-line-default"
+            className="bg-surface-default ring-line-default absolute right-5 bottom-5 w-48 rounded-xl p-3 shadow-lg ring-1"
           >
-            <p className="text-content-primary text-sm font-medium">Draft saved</p>
-            <p className="text-content-secondary mt-1 text-xs">Your changes are up to date.</p>
+            <p className="text-content-primary text-sm font-medium">
+              Draft saved
+            </p>
+            <p className="text-content-secondary mt-1 text-xs">
+              Your changes are up to date.
+            </p>
           </motion.div>
         ) : null}
       </AnimatePresence>
-    </div>
+    </div>,
   );
 }
 

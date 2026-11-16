@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import { useAccountText } from "../lib/account-interface";
 import { useEffect, useState } from "react";
 import { StarIcon } from "@heroicons/react/24/outline";
@@ -10,6 +11,8 @@ import {
   writeLibraryCache,
 } from "../lib/library-client";
 export function SaveSkillButton({ skillPath }: { skillPath: string }) {
+  const localizeUi = useUiTree();
+
   const t = useAccountText();
   const [saved, setSaved] = useState(false);
   const [pending, setPending] = useState(false);
@@ -54,7 +57,7 @@ export function SaveSkillButton({ skillPath }: { skillPath: string }) {
     }
   }
   const Icon = saved ? StarSolidIcon : StarIcon;
-  return (
+  return localizeUi(
     <div className="flex items-center gap-2">
       <button
         type="button"
@@ -79,6 +82,6 @@ export function SaveSkillButton({ skillPath }: { skillPath: string }) {
           {t(error)}
         </span>
       )}
-    </div>
+    </div>,
   );
 }

@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import githubMetadata from "../data/github-metadata.json";
 import {
   componentCollections,
@@ -38,8 +39,10 @@ export default function ComponentLibraryDirectory({
   libraries,
   showCollectionHeaders = true,
 }: Props) {
+  const localizeUi = useUiTree();
+
   if (!showCollectionHeaders) {
-    return (
+    return localizeUi(
       <TooltipProvider>
         <div>
           {libraries.map((library) => (
@@ -50,11 +53,11 @@ export default function ComponentLibraryDirectory({
             />
           ))}
         </div>
-      </TooltipProvider>
+      </TooltipProvider>,
     );
   }
 
-  return (
+  return localizeUi(
     <TooltipProvider>
       <div className="flex flex-col gap-10">
         {componentCollections.map((collection) => {
@@ -94,7 +97,7 @@ export default function ComponentLibraryDirectory({
           );
         })}
       </div>
-    </TooltipProvider>
+    </TooltipProvider>,
   );
 }
 
@@ -105,6 +108,8 @@ function LibraryRow({
   library: ComponentLibrary;
   headingLevel: "h2" | "h3";
 }) {
+  const localizeUi = useUiTree();
+
   const repository = library.githubRepo
     ? repositoryMetadata.repositories[library.githubRepo.toLowerCase()]
     : undefined;
@@ -122,7 +127,7 @@ function LibraryRow({
     : `Open ${library.name} website`;
   const Heading = headingLevel;
 
-  return (
+  return localizeUi(
     <article className="border-line-default flex items-start gap-3 border-b py-4 sm:items-center">
       <a href={avatarHref} aria-label={avatarLabel} className="shrink-0">
         <img
@@ -141,7 +146,7 @@ function LibraryRow({
         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
           <Heading className="type-body-md text-content-primary truncate font-[450]">
             <a
-              href={library.websiteUrl}
+              href={library.websiteUrl} translate="no"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:underline"
@@ -175,6 +180,6 @@ function LibraryRow({
             : undefined
         }
       />
-    </article>
+    </article>,
   );
 }

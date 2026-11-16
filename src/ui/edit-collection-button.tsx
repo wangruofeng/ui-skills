@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import { Dialog } from "@base-ui/react/dialog";
 import { PencilIcon } from "@heroicons/react/24/outline";
 import { useId, useRef, useState } from "react";
@@ -19,6 +20,8 @@ export function EditCollectionButton({
   collectionId,
   title,
 }: EditCollectionButtonProps) {
+  const localizeUi = useUiTree();
+
   const titleId = useId();
   const errorId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -49,7 +52,7 @@ export function EditCollectionButton({
       });
   };
 
-  return (
+  return localizeUi(
     <Dialog.Root
       open={open}
       onOpenChange={(nextOpen) => {
@@ -120,7 +123,7 @@ export function EditCollectionButton({
               </Dialog.Close>
               <button
                 type="submit"
-                className={`${controlClass} border-transparent bg-fill-inverse text-content-inverse`}
+                className={`${controlClass} bg-fill-inverse text-content-inverse border-transparent`}
                 disabled={pending}
               >
                 Save
@@ -129,6 +132,6 @@ export function EditCollectionButton({
           </form>
         </Dialog.Popup>
       </Dialog.Portal>
-    </Dialog.Root>
+    </Dialog.Root>,
   );
 }

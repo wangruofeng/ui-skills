@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import { useEffect, useState } from "react";
 import {
   getApplyUrl,
@@ -23,9 +24,11 @@ function logoUrl(companyWebsite: string | null) {
 }
 
 function JobRow({ apiUrl, job }: { apiUrl: string; job: PublicJob }) {
+  const localizeUi = useUiTree();
+
   const logo = logoUrl(job.companyWebsite);
 
-  return (
+  return localizeUi(
     <a
       href={getApplyUrl(apiUrl, job.applicationUrl)}
       target="_blank"
@@ -56,7 +59,7 @@ function JobRow({ apiUrl, job }: { apiUrl: string; job: PublicJob }) {
           {formatDate(job.publishedAt)}
         </div>
       </div>
-    </a>
+    </a>,
   );
 }
 
@@ -71,6 +74,8 @@ export default function JobsList({
   initialResponse,
   initialError,
 }: JobsListProps) {
+  const localizeUi = useUiTree();
+
   const [jobs, setJobs] = useState<PublicJob[]>(initialResponse?.jobs ?? []);
   const [hasMore, setHasMore] = useState(initialResponse?.hasMore ?? false);
   const [offset, setOffset] = useState(
@@ -119,13 +124,13 @@ export default function JobsList({
   }
 
   if (loading) {
-    return (
-      <div className="type-body-md text-content-secondary">Loading jobs…</div>
+    return localizeUi(
+      <div className="type-body-md text-content-secondary">Loading jobs…</div>,
     );
   }
 
   if (error && jobs.length === 0) {
-    return (
+    return localizeUi(
       <div className="flex flex-col gap-2">
         <p className="type-body-md text-content-secondary">{error}</p>
         <button
@@ -135,19 +140,19 @@ export default function JobsList({
         >
           Try again
         </button>
-      </div>
+      </div>,
     );
   }
 
   if (jobs.length === 0) {
-    return (
+    return localizeUi(
       <p className="type-body-md text-content-secondary">
         No jobs are available right now.
-      </p>
+      </p>,
     );
   }
 
-  return (
+  return localizeUi(
     <div className="flex flex-col">
       {jobs.map((job) => (
         <JobRow key={job.id} apiUrl={apiUrl} job={job} />
@@ -165,6 +170,6 @@ export default function JobsList({
           {loadingMore ? "Loading…" : "Load more jobs"}
         </button>
       ) : null}
-    </div>
+    </div>,
   );
 }

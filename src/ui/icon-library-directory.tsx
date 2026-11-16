@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import type { IconLibrary } from "../data/icon-libraries";
 import githubMetadata from "../data/github-metadata.json";
 import IconLibraryActions from "./icon-library-actions";
@@ -22,7 +23,9 @@ const formatStars = (stars?: number) => {
 };
 
 export default function IconLibraryDirectory({ libraries }: Props) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <TooltipProvider>
       <div>
         {libraries.map((library) => {
@@ -51,7 +54,7 @@ export default function IconLibraryDirectory({ libraries }: Props) {
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
                   <h2 className="type-body-md text-content-primary truncate font-[450]">
                     <a
-                      href={library.websiteUrl}
+                      href={library.websiteUrl} translate="no"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:underline"
@@ -85,6 +88,6 @@ export default function IconLibraryDirectory({ libraries }: Props) {
           );
         })}
       </div>
-    </TooltipProvider>
+    </TooltipProvider>,
   );
 }

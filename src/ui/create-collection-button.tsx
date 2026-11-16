@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import { Dialog } from "@base-ui/react/dialog";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { useId, useRef, useState } from "react";
@@ -11,6 +12,8 @@ const fieldClass =
   "type-body-md text-content-primary placeholder:text-content-muted w-full rounded-lg bg-surface-default px-3 py-2 ring-1 ring-line-default outline-none focus:outline-none focus-visible:outline-none";
 
 export function CreateCollectionButton() {
+  const localizeUi = useUiTree();
+
   const titleId = useId();
   const errorId = useId();
   const [open, setOpen] = useState(false);
@@ -41,7 +44,7 @@ export function CreateCollectionButton() {
       });
   };
 
-  return (
+  return localizeUi(
     <Dialog.Root
       open={open}
       onOpenChange={(nextOpen) => {
@@ -116,7 +119,7 @@ export function CreateCollectionButton() {
               </Dialog.Close>
               <button
                 type="submit"
-                className={`${controlClass} border-transparent bg-fill-inverse text-content-inverse`}
+                className={`${controlClass} bg-fill-inverse text-content-inverse border-transparent`}
                 disabled={pending}
               >
                 Create
@@ -125,6 +128,6 @@ export function CreateCollectionButton() {
           </form>
         </Dialog.Popup>
       </Dialog.Portal>
-    </Dialog.Root>
+    </Dialog.Root>,
   );
 }

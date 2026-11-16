@@ -1,9 +1,12 @@
+import { useUiTree } from "../lib/ui-localization";
 import { useAccountText } from "../lib/account-interface";
 import { useEffect, useState } from "react";
 import { authClient } from "../lib/auth-client";
 import { safeReturnTo } from "../lib/auth-config";
 import { clearLibraryCache } from "../lib/library-client";
 export function LoginPanel() {
+  const localizeUi = useUiTree();
+
   const t = useAccountText();
   const [ready, setReady] = useState(false);
   const [pending, setPending] = useState(false);
@@ -47,7 +50,7 @@ export function LoginPanel() {
       setPending(false);
     }
   }
-  return (
+  return localizeUi(
     <div className="flex w-full flex-col gap-4">
       <button
         type="button"
@@ -69,6 +72,6 @@ export function LoginPanel() {
           {t(error)}
         </p>
       )}
-    </div>
+    </div>,
   );
 }

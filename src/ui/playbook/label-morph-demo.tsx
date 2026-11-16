@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../button";
@@ -18,6 +19,8 @@ function CopyLabelButton({
   withBlur?: boolean;
   duration: number;
 }) {
+  const localizeUi = useUiTree();
+
   const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState(false);
   const holdTimerRef = useRef<number | null>(null);
@@ -46,7 +49,7 @@ function CopyLabelButton({
     }, HOLD_MS);
   };
 
-  return (
+  return localizeUi(
     <Button
       type="button"
       variant="outline"
@@ -81,7 +84,7 @@ function CopyLabelButton({
           </motion.span>
         </AnimatePresence>
       </span>
-    </Button>
+    </Button>,
   );
 }
 

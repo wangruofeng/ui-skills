@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { cn } from "../../lib/cn";
 import { PlaybookDemoCard } from "./demo-card";
 
@@ -17,8 +18,10 @@ const items = [
 ];
 
 function ScrollList({ faded = false }: { faded?: boolean }) {
-  return (
-    <div className="border-line-default w-full max-w-xs overflow-hidden rounded-lg border bg-surface-default">
+  const localizeUi = useUiTree();
+
+  return localizeUi(
+    <div className="border-line-default bg-surface-default w-full max-w-xs overflow-hidden rounded-lg border">
       <div
         className={cn(
           "no-scrollbar h-52 overflow-y-auto py-1",
@@ -31,7 +34,7 @@ function ScrollList({ faded = false }: { faded?: boolean }) {
           </p>
         ))}
       </div>
-    </div>
+    </div>,
   );
 }
 

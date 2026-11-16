@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { useAccountText } from "../lib/account-interface";
 import { useEffect, useState } from "react";
@@ -15,6 +16,8 @@ type Entry = {
   kind: string;
 };
 export function SavedSkills() {
+  const localizeUi = useUiTree();
+
   const t = useAccountText();
   const [skills, setSkills] = useState<Entry[]>([]);
   const [phase, setPhase] = useState("loading");
@@ -77,7 +80,7 @@ export function SavedSkills() {
       setPending(null);
     }
   }
-  return (
+  return localizeUi(
     <div className="flex flex-col gap-4">
       {phase === "loading" && (
         <p role="status" className="type-body-md text-content-secondary">
@@ -153,6 +156,6 @@ export function SavedSkills() {
           )}
         </div>
       )}
-    </div>
+    </div>,
   );
 }

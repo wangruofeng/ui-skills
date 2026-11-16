@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import { Menu as BaseMenu } from "@base-ui/react/menu";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "../lib/cn";
@@ -11,7 +12,9 @@ function Root({
   modal = false,
   ...props
 }: ComponentProps<typeof BaseMenu.Root>) {
-  return <BaseMenu.Root modal={modal} {...props} />;
+  const localizeUi = useUiTree();
+
+  return localizeUi(<BaseMenu.Root modal={modal} {...props} />);
 }
 
 function Popup({
@@ -27,7 +30,9 @@ function Popup({
   align?: "start" | "center" | "end";
   sideOffset?: number;
 }) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <BaseMenu.Portal>
       <BaseMenu.Positioner
         className="z-50"
@@ -39,22 +44,43 @@ function Popup({
           {children}
         </BaseMenu.Popup>
       </BaseMenu.Positioner>
-    </BaseMenu.Portal>
+    </BaseMenu.Portal>,
   );
 }
 
-function Item({
-  className,
-  ...props
-}: ComponentProps<typeof BaseMenu.Item>) {
-  return <BaseMenu.Item className={(state) => cn(itemClass, typeof className === "function" ? className(state) : className)} {...props} />;
+function Item({ className, ...props }: ComponentProps<typeof BaseMenu.Item>) {
+  const localizeUi = useUiTree();
+
+  return localizeUi(
+    <BaseMenu.Item
+      className={(state) =>
+        cn(
+          itemClass,
+          typeof className === "function" ? className(state) : className,
+        )
+      }
+      {...props}
+    />,
+  );
 }
 
 function LinkItem({
   className,
   ...props
 }: ComponentProps<typeof BaseMenu.LinkItem>) {
-  return <BaseMenu.LinkItem className={(state) => cn(itemClass, typeof className === "function" ? className(state) : className)} {...props} />;
+  const localizeUi = useUiTree();
+
+  return localizeUi(
+    <BaseMenu.LinkItem
+      className={(state) =>
+        cn(
+          itemClass,
+          typeof className === "function" ? className(state) : className,
+        )
+      }
+      {...props}
+    />,
+  );
 }
 
 function CheckboxItem({
@@ -62,7 +88,15 @@ function CheckboxItem({
   ...props
 }: ComponentProps<typeof BaseMenu.CheckboxItem>) {
   return (
-    <BaseMenu.CheckboxItem className={(state) => cn(itemClass, typeof className === "function" ? className(state) : className)} {...props} />
+    <BaseMenu.CheckboxItem
+      className={(state) =>
+        cn(
+          itemClass,
+          typeof className === "function" ? className(state) : className,
+        )
+      }
+      {...props}
+    />
   );
 }
 
@@ -72,7 +106,12 @@ function Separator({
 }: ComponentProps<typeof BaseMenu.Separator>) {
   return (
     <BaseMenu.Separator
-      className={(state) => cn("border-line-default mx-2 my-1 border-t", typeof className === "function" ? className(state) : className)}
+      className={(state) =>
+        cn(
+          "border-line-default mx-2 my-1 border-t",
+          typeof className === "function" ? className(state) : className,
+        )
+      }
       {...props}
     />
   );

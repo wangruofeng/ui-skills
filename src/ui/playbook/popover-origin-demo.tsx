@@ -1,10 +1,13 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { Button } from "../button";
 import { PlaybookDemoCard } from "./demo-card";
 
 function MoreIcon() {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <svg
       viewBox="0 0 24 24"
       className="size-4"
@@ -14,14 +17,16 @@ function MoreIcon() {
       <circle cx="12" cy="5" r="1.75" />
       <circle cx="12" cy="12" r="1.75" />
       <circle cx="12" cy="19" r="1.75" />
-    </svg>
+    </svg>,
   );
 }
 
 function PopoverOrigin({ fromTrigger = false }: { fromTrigger?: boolean }) {
+  const localizeUi = useUiTree();
+
   const [open, setOpen] = useState(false);
 
-  return (
+  return localizeUi(
     <div className="relative flex flex-col items-start">
       <AnimatePresence>
         {open ? (
@@ -31,7 +36,7 @@ function PopoverOrigin({ fromTrigger = false }: { fromTrigger?: boolean }) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
             transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
-            className={`absolute bottom-full left-0 mb-2 w-44 rounded-lg bg-surface-default p-3 shadow-lg ring-1 ring-line-default ${fromTrigger ? "origin-bottom-left" : "origin-center"}`}
+            className={`bg-surface-default ring-line-default absolute bottom-full left-0 mb-2 w-44 rounded-lg p-3 shadow-lg ring-1 ${fromTrigger ? "origin-bottom-left" : "origin-center"}`}
           >
             <p className="text-content-primary text-sm font-medium">Sort by</p>
             <p className="text-content-secondary mt-1 text-xs">
@@ -52,7 +57,7 @@ function PopoverOrigin({ fromTrigger = false }: { fromTrigger?: boolean }) {
       >
         <MoreIcon />
       </Button>
-    </div>
+    </div>,
   );
 }
 

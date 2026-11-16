@@ -30,7 +30,8 @@
     "check": "npm run typecheck && npm test && npm run build && npm run verify:site",
     "start": "astro dev",
     "prebuild": "node --import tsx scripts/cache-skills.mjs",
-    "verify:site": "node scripts/verify-site.mjs"
+    "verify:site": "node scripts/verify-site.mjs && npm run check:i18n",
+    "check:i18n": "node scripts/audit-localization.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.3.1",

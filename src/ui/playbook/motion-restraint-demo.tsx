@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { useState } from "react";
 import { cn } from "../../lib/cn";
 import { PlaybookDemoCard } from "./demo-card";
@@ -11,10 +12,12 @@ const TABS = [
 type TabId = (typeof TABS)[number]["id"];
 
 function WorkbenchTabs({ restrained = false }: { restrained?: boolean }) {
+  const localizeUi = useUiTree();
+
   const [active, setActive] = useState<TabId>("overview");
   const activeTab = TABS.find((tab) => tab.id === active)!;
 
-  return (
+  return localizeUi(
     <div className="w-56">
       <div
         className="border-line-default flex border-b"
@@ -57,7 +60,7 @@ function WorkbenchTabs({ restrained = false }: { restrained?: boolean }) {
           </p>
         )}
       </div>
-    </div>
+    </div>,
   );
 }
 

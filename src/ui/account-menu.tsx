@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import { useAccountText } from "../lib/account-interface";
 import {
   ArrowRightStartOnRectangleIcon,
@@ -16,6 +17,8 @@ type AccountUser = {
 };
 
 export function AccountMenu() {
+  const localizeUi = useUiTree();
+
   const t = useAccountText();
   const [user, setUser] = useState<AccountUser | null>(null);
   const [pending, setPending] = useState(false);
@@ -61,7 +64,7 @@ export function AccountMenu() {
 
   if (!user) return null;
 
-  return (
+  return localizeUi(
     <Menu.Root>
       <Menu.Trigger
         className="focus-visible:outline-content-primary inline-flex size-8 cursor-pointer items-center justify-center rounded-full outline-none focus-visible:outline-1 focus-visible:outline-offset-2"
@@ -121,6 +124,6 @@ export function AccountMenu() {
           </p>
         ) : null}
       </Menu.Popup>
-    </Menu.Root>
+    </Menu.Root>,
   );
 }

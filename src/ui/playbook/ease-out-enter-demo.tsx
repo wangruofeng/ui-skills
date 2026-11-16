@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { Button } from "../button";
@@ -10,12 +11,19 @@ const EASE_IN = [0.42, 0, 1, 1] as const;
 const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 
 function MoreIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-4" fill="currentColor" aria-hidden="true">
+  const localizeUi = useUiTree();
+
+  return localizeUi(
+    <svg
+      viewBox="0 0 24 24"
+      className="size-4"
+      fill="currentColor"
+      aria-hidden="true"
+    >
       <circle cx="12" cy="5" r="1.75" />
       <circle cx="12" cy="12" r="1.75" />
       <circle cx="12" cy="19" r="1.75" />
-    </svg>
+    </svg>,
   );
 }
 
@@ -26,11 +34,13 @@ function OptionsMenu({
   easeOut?: boolean;
   duration: number;
 }) {
+  const localizeUi = useUiTree();
+
   const [open, setOpen] = useState(false);
   const ease = easeOut ? EASE_OUT : EASE_IN;
   const transition = { duration, ease };
 
-  return (
+  return localizeUi(
     <div className="relative">
       <Button
         type="button"
@@ -51,7 +61,7 @@ function OptionsMenu({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, transition }}
             exit={{ opacity: 0, transition }}
-            className="absolute top-full left-0 z-10 mt-1.5 w-40 overflow-hidden rounded-lg bg-surface-default py-1 shadow-lg ring-1 ring-line-default"
+            className="bg-surface-default ring-line-default absolute top-full left-0 z-10 mt-1.5 w-40 overflow-hidden rounded-lg py-1 shadow-lg ring-1"
           >
             {["Rename", "Duplicate", "Share"].map((item) => (
               <button
@@ -67,14 +77,14 @@ function OptionsMenu({
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="text-red-600 hover:bg-fill-subtle block w-full px-3 py-1.5 text-left text-sm"
+              className="hover:bg-fill-subtle block w-full px-3 py-1.5 text-left text-sm text-red-600"
             >
               Delete
             </button>
           </motion.div>
         ) : null}
       </AnimatePresence>
-    </div>
+    </div>,
   );
 }
 

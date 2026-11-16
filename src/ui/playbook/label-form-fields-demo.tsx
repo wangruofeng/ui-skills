@@ -1,25 +1,40 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { useId } from "react";
 import { Input } from "../input";
 import { PlaybookDemoCard } from "./demo-card";
 
 function EmailField({ labeled = false }: { labeled?: boolean }) {
+  const localizeUi = useUiTree();
+
   const emailId = useId();
 
   if (labeled) {
-    return (
+    return localizeUi(
       <div className="w-56 text-left">
-        <label htmlFor={emailId} className="text-content-primary text-sm font-medium">
+        <label
+          htmlFor={emailId}
+          className="text-content-primary text-sm font-medium"
+        >
           Email address
         </label>
-        <Input id={emailId} type="email" defaultValue="hello@example.com" className="mt-1.5" />
-      </div>
+        <Input
+          id={emailId}
+          type="email"
+          defaultValue="hello@example.com"
+          className="mt-1.5"
+        />
+      </div>,
     );
   }
 
-  return (
+  return localizeUi(
     <div className="w-56 text-left">
-      <Input type="email" placeholder="Email address" defaultValue="hello@example.com" />
-    </div>
+      <Input
+        type="email"
+        placeholder="Email address"
+        defaultValue="hello@example.com"
+      />
+    </div>,
   );
 }
 

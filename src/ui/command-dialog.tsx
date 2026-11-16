@@ -1,3 +1,4 @@
+import { useUiText, useUiTree } from "../lib/ui-localization";
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import {
@@ -126,7 +127,13 @@ const highlightText = (value: string, query: string): ReactNode => {
   );
 };
 
-export function CommandDialog({ items: initialItems, hideTrigger = false }: CommandDialogProps) {
+export function CommandDialog({
+  items: initialItems,
+  hideTrigger = false,
+}: CommandDialogProps) {
+  const localizeUi = useUiTree();
+  const t = useUiText();
+
   const [items, setItems] = useState(initialItems);
   const [indexLoading, setIndexLoading] = useState(true);
   const [indexError, setIndexError] = useState(false);
@@ -136,10 +143,20 @@ export function CommandDialog({ items: initialItems, hideTrigger = false }: Comm
     setIndexLoading(true);
     setIndexError(false);
     fetch("/data/search-index.json", { signal: controller.signal })
-      .then(response => { if (!response.ok) throw new Error("Search index unavailable"); return response.json(); })
-      .then((entries: CommandItem[]) => { if (!Array.isArray(entries)) throw new Error("Invalid search index"); setItems(entries); })
-      .catch(() => { if (!controller.signal.aborted) setIndexError(true); })
-      .finally(() => { if (!controller.signal.aborted) setIndexLoading(false); });
+      .then((response) => {
+        if (!response.ok) throw new Error("Search index unavailable");
+        return response.json();
+      })
+      .then((entries: CommandItem[]) => {
+        if (!Array.isArray(entries)) throw new Error("Invalid search index");
+        setItems(entries);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setIndexError(true);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setIndexLoading(false);
+      });
     return () => controller.abort();
   }, [indexRetry]);
   const [open, setOpen] = useState(false);
@@ -152,13 +169,16 @@ export function CommandDialog({ items: initialItems, hideTrigger = false }: Comm
         return {
           ...item,
           slugLower: item.slug.toLowerCase(),
-          labelLower: item.label.toLowerCase(),
+          label: t(item.label),
+          description: t(item.description ?? ""),
+          labelLower: `${item.label} ${t(item.label)}`.toLowerCase(),
           pathSlugLower: item.pathSlug.toLowerCase(),
           sourceLower: (item.sourceLabel ?? "").toLowerCase(),
-          descriptionLower: (item.description ?? "").toLowerCase(),
+          descriptionLower:
+            `${item.description ?? ""} ${t(item.description ?? "")}`.toLowerCase(),
         };
       }),
-    [items],
+    [items, t],
   );
 
   useEffect(() => {
@@ -291,7 +311,8 @@ export function CommandDialog({ items: initialItems, hideTrigger = false }: Comm
 
     setOpen(false);
     setQuery("");
-    window.location.href = (location.pathname.startsWith("/en/") ? "/en" : "") + selected.href;
+    window.location.href =
+      (location.pathname.startsWith("/en/") ? "/en" : "") + selected.href;
   };
 
   const onInputKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
@@ -338,7 +359,7 @@ export function CommandDialog({ items: initialItems, hideTrigger = false }: Comm
     }
   };
 
-  return (
+  return localizeUi(
     <TooltipProvider>
       <DialogPrimitive.Root open={open} onOpenChange={handleOpenChange}>
         {!hideTrigger ? (
@@ -354,19 +375,25 @@ export function CommandDialog({ items: initialItems, hideTrigger = false }: Comm
               aria-label="Search skills and playbook"
               className="border-line-default bg-fill-default text-content-primary hover:bg-fill-subtle focus-visible:outline-content-primary inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-sm transition-colors focus-visible:outline-1 focus-visible:outline-offset-2"
             >
-              <MagnifyingGlassIcon className="size-4 shrink-0" aria-hidden="true" />
+              <MagnifyingGlassIcon
+                className="size-4 shrink-0"
+                aria-hidden="true"
+              />
             </DialogPrimitive.Trigger>
           </Tooltip>
         ) : null}
 
         <DialogPrimitive.Portal>
-          <DialogPrimitive.Backdrop className="fixed inset-0 z-50 bg-fill-inverse/35 backdrop-blur-sm" />
-          <DialogPrimitive.Popup className="border-line-default fixed top-24 left-1/2 z-50 w-[min(92vw,680px)] -translate-x-1/2 rounded-[12px] border bg-surface-default shadow-xl outline-none">
+          <DialogPrimitive.Backdrop className="bg-fill-inverse/35 fixed inset-0 z-50 backdrop-blur-sm" />
+          <DialogPrimitive.Popup className="border-line-default bg-surface-default fixed top-24 left-1/2 z-50 w-[min(92vw,680px)] -translate-x-1/2 rounded-[12px] border shadow-xl outline-none">
             <DialogPrimitive.Title className="sr-only">
               Search skills and playbook
             </DialogPrimitive.Title>
             <div className="border-line-default flex items-center gap-2 border-b px-4 py-3">
-              <MagnifyingGlassIcon className="size-4 text-content-secondary" aria-hidden="true" />
+              <MagnifyingGlassIcon
+                className="text-content-secondary size-4"
+                aria-hidden="true"
+              />
               <input
                 autoFocus
                 value={query}
@@ -386,12 +413,27 @@ export function CommandDialog({ items: initialItems, hideTrigger = false }: Comm
             </div>
 
             <div
-              className="max-h-[55vh] overflow-y-auto px-2 pb-2 space-y-1"
+              className="max-h-[55vh] space-y-1 overflow-y-auto px-2 pb-2"
               role="listbox"
               id="command-search-results"
             >
-              {indexLoading && <p role="status" className="px-3 py-2 text-sm text-content-secondary">Loading full catalog…</p>}
-              {indexError && <button type="button" className="px-3 py-2 text-sm text-content-secondary underline" onClick={() => setIndexRetry(value => value + 1)}>Search catalog could not load. Retry</button>}
+              {indexLoading && (
+                <p
+                  role="status"
+                  className="text-content-secondary px-3 py-2 text-sm"
+                >
+                  Loading full catalog…
+                </p>
+              )}
+              {indexError && (
+                <button
+                  type="button"
+                  className="text-content-secondary px-3 py-2 text-sm underline"
+                  onClick={() => setIndexRetry((value) => value + 1)}
+                >
+                  Search catalog could not load. Retry
+                </button>
+              )}
               {filteredItems.length === 0 ? (
                 <div className="text-content-secondary px-2 py-8 text-center text-sm">
                   No skills or playbook entries found.
@@ -424,10 +466,11 @@ export function CommandDialog({ items: initialItems, hideTrigger = false }: Comm
                           type="button"
                           onClick={() => onSelect(item.pathSlug)}
                           onMouseEnter={() => setActiveIndex(index)}
-                          className={`w-full rounded-[8px] px-3 py-2 text-left transition-colors ${index === activeIndex
-                            ? "bg-fill-subtle"
-                            : "hover:bg-fill-subtle"
-                            }`}
+                          className={`w-full rounded-[8px] px-3 py-2 text-left transition-colors ${
+                            index === activeIndex
+                              ? "bg-fill-subtle"
+                              : "hover:bg-fill-subtle"
+                          }`}
                         >
                           <div className="text-content-primary text-sm font-medium">
                             {highlightText(
@@ -478,6 +521,6 @@ export function CommandDialog({ items: initialItems, hideTrigger = false }: Comm
           </DialogPrimitive.Popup>
         </DialogPrimitive.Portal>
       </DialogPrimitive.Root>
-    </TooltipProvider>
+    </TooltipProvider>,
   );
 }

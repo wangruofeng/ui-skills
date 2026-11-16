@@ -1,10 +1,13 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { useRef, useState, type FocusEvent } from "react";
 import { PlaybookDemoCard } from "./demo-card";
 
 const TOOLTIP_DELAY_MS = 500;
 
 function ToolbarIcon() {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <svg
       viewBox="0 0 24 24"
       className="size-4"
@@ -14,11 +17,13 @@ function ToolbarIcon() {
       aria-hidden="true"
     >
       <path strokeLinecap="round" d="M12 5v14M5 12h14" />
-    </svg>
+    </svg>,
   );
 }
 
 function TooltipToolbar({ warm = false }: { warm?: boolean }) {
+  const localizeUi = useUiTree();
+
   const [activeTip, setActiveTip] = useState<string | null>(null);
   const warmedRef = useRef(false);
   const timeoutRef = useRef<number | null>(null);
@@ -53,13 +58,13 @@ function TooltipToolbar({ warm = false }: { warm?: boolean }) {
     }
   };
 
-  return (
+  return localizeUi(
     <div
       className="relative"
       onMouseLeave={warm ? hideTip : undefined}
       onBlur={warm ? handleBlur : undefined}
     >
-      <div className="flex gap-1 rounded-lg bg-surface-default p-1 ring-1 ring-line-default">
+      <div className="bg-surface-default ring-line-default flex gap-1 rounded-lg p-1 ring-1">
         {labels.map((label) => (
           <button
             key={label}
@@ -79,7 +84,7 @@ function TooltipToolbar({ warm = false }: { warm?: boolean }) {
               <span
                 id={`tooltip-${label.toLowerCase()}`}
                 role="tooltip"
-                className="bg-fill-inverse pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 rounded-md px-2 py-1 text-xs whitespace-nowrap text-content-inverse"
+                className="bg-fill-inverse text-content-inverse pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 rounded-md px-2 py-1 text-xs whitespace-nowrap"
               >
                 {label}
               </span>
@@ -87,7 +92,7 @@ function TooltipToolbar({ warm = false }: { warm?: boolean }) {
           </button>
         ))}
       </div>
-    </div>
+    </div>,
   );
 }
 

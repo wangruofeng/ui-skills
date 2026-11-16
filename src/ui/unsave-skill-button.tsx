@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import { Popover } from "@base-ui/react/popover";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
@@ -17,6 +18,8 @@ export function UnsaveSkillButton({
   label,
   collectionId,
 }: UnsaveSkillButtonProps) {
+  const localizeUi = useUiTree();
+
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +29,8 @@ export function UnsaveSkillButton({
     setError(null);
     (collectionId
       ? removeSkillFromCollection(collectionId, skillPath)
-      : unsaveSkill(skillPath))
+      : unsaveSkill(skillPath)
+    )
       .then(() => {
         window.location.reload();
       })
@@ -40,7 +44,7 @@ export function UnsaveSkillButton({
       });
   };
 
-  return (
+  return localizeUi(
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger
         className="hover:bg-fill-strong focus-visible:outline-content-primary inline-flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-lg outline-none focus-visible:outline-1 focus-visible:outline-offset-2 disabled:opacity-60"
@@ -79,7 +83,7 @@ export function UnsaveSkillButton({
               </button>
               <button
                 type="button"
-                className={`${controlClass} border-transparent bg-fill-inverse text-content-inverse`}
+                className={`${controlClass} bg-fill-inverse text-content-inverse border-transparent`}
                 disabled={pending}
                 onClick={remove}
               >
@@ -89,6 +93,6 @@ export function UnsaveSkillButton({
           </Popover.Popup>
         </Popover.Positioner>
       </Popover.Portal>
-    </Popover.Root>
+    </Popover.Root>,
   );
 }

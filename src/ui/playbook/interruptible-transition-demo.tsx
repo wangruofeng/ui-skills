@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { useState } from "react";
 import { cn } from "../../lib/cn";
 import { Button } from "../button";
@@ -6,13 +7,15 @@ import { PlaybookDemoCard } from "./demo-card";
 const NAV = ["Home", "Projects", "Settings"];
 
 function SidebarApp({ interruptible = false }: { interruptible?: boolean }) {
+  const localizeUi = useUiTree();
+
   const [open, setOpen] = useState(false);
 
-  return (
+  return localizeUi(
     <div className="relative h-full w-full overflow-hidden">
       <aside
         className={cn(
-          "border-line-default absolute inset-y-0 left-0 z-10 flex w-32 flex-col justify-center border-r bg-surface-default px-4",
+          "border-line-default bg-surface-default absolute inset-y-0 left-0 z-10 flex w-32 flex-col justify-center border-r px-4",
           interruptible
             ? cn(
                 "transition-transform duration-300 ease-out",
@@ -44,7 +47,7 @@ function SidebarApp({ interruptible = false }: { interruptible?: boolean }) {
           {open ? "Close" : "Open"}
         </Button>
       </div>
-    </div>
+    </div>,
   );
 }
 

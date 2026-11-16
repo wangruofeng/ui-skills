@@ -2,10 +2,9 @@ import {readFile,writeFile,readdir,mkdir} from 'node:fs/promises';
 import path from 'node:path';
 import {parse,serialize} from 'parse5';
 const origin='https://ui-skills.wangruofeng007.com';
-// The same dictionary drives static HTML and interactive controls.
-const source=await readFile('public/fork-i18n.js','utf8');
-const dictionary=JSON.parse(source.match(/const words = (\{[\s\S]*?\n  \});/)[1].replace(/'([^'\n]*)'\s*:/g,(_,x)=>JSON.stringify(x)+':').replace(/:\s*'([^'\n]*)'/g,(_,x)=>':'+JSON.stringify(x)).replace(/,\s*}/g,'}'));
-const text=(value)=>{const t=value.trim();return dictionary[t]?value.replace(t,dictionary[t]):value;};
+import {translateText} from '../public/i18n-core.mjs';
+const dictionary=JSON.parse(await readFile('public/i18n/zh-CN.json','utf8'));
+const text=value=>translateText(value,dictionary);
 const files=[];async function walk(dir){for(const e of await readdir(dir,{withFileTypes:true})){if(e.name==='en')continue;const f=path.join(dir,e.name);if(e.isDirectory())await walk(f);else if(f.endsWith('.html'))files.push(f);}}await walk('dist');
 const pages=new Set(files.filter(f=>!f.endsWith('/404.html')&&!f.startsWith('dist/agent/')&&!/^dist\/(?:login|library)(?:\/|\.)/.test(f)).map(f=>{let x='/'+path.relative('dist',f).replaceAll(path.sep,'/').replace(/index\.html$/,'').replace(/\.html$/,'');return x==='/'?'/':x.replace(/\/$/,'');}));
 const service=/^\/(?:jobs|sponsor|oauth)(?:\/|$)|^\/mcp(?:\/rpc)?$/;
@@ -18,13 +17,13 @@ for(const file of files){
   function visit(node,protectedContent=false){const attrs=node.attrs??[];const get=n=>attrs.find(a=>a.name===n);const set=(n,v)=>{let a=get(n);if(a)a.value=v;else attrs.push({name:n,value:v});};
    if(node.tagName==='head')head=node;
    if(node.tagName==='html')set('lang',en?'en':'zh-CN');
-   if(en && node.tagName==='script' && get('type')?.value==='application/ld+json') {
-    try {const json=JSON.parse(node.childNodes[0]?.value??'null');const remap=v=>{if(typeof v==='string'&&v.startsWith(origin)){const u=new URL(v);return pages.has(u.pathname.replace(/\/$/,'')||'/')?origin+'/en'+u.pathname+u.search+u.hash:v;}if(Array.isArray(v))return v.map(remap);if(v&&typeof v==='object')return Object.fromEntries(Object.entries(v).map(([k,value])=>[k,remap(value)]));return v;};node.childNodes[0].value=JSON.stringify(remap(json)).replaceAll('<','\\u003c');}catch{}
+   if(node.tagName==='script' && get('type')?.value==='application/ld+json') {
+    try {const json=JSON.parse(node.childNodes[0]?.value??'null');const remap=(v,key='')=>{if(typeof v==='string'){if(en&&v.startsWith(origin)){const u=new URL(v);return pages.has(u.pathname.replace(/\/$/,'')||'/')?origin+'/en'+u.pathname+u.search+u.hash:v;}if(!en&&['name','headline','description','text','alternateName'].includes(key))return text(v);if(!en&&key==='inLanguage'&&!normalized.startsWith('/skills/'))return 'zh-CN';return v;}if(Array.isArray(v))return v.map(x=>remap(x,key));if(v&&typeof v==='object')return Object.fromEntries(Object.entries(v).map(([k,value])=>[k,remap(value,k)]));return v;};node.childNodes[0].value=JSON.stringify(remap(json)).replaceAll('<','\\u003c');}catch{}
    }
-   const keep=protectedContent||['script','style','pre','code'].includes(node.tagName)||!!get('data-original-content')||node.tagName==='astro-island';
+   const keep=protectedContent||['script','style','pre','code'].includes(node.tagName)||!!get('data-original-content')||get('translate')?.value==='no'||node.tagName==='astro-island';
    if(node.nodeName==='#text'&&!en&&!keep)node.value=text(node.value);
    if(node.tagName){
-    if(!en&&!keep)for(const a of attrs)if(['aria-label','placeholder','title'].includes(a.name))a.value=text(a.value);
+    if(!en&&!keep)for(const a of attrs)if(['aria-label','placeholder','title','alt'].includes(a.name))a.value=text(a.value);
     for(const a of attrs)if(['href','data-card-href'].includes(a.name))a.value=localizedLink(a.value,en);
     if(get('data-language-switch')){set('href',(en?'':'/en')+(is404?'/':normalized));set('lang',en?'zh-CN':'en');set('aria-label',en?'切换到中文':'Switch to English');node.childNodes=[{nodeName:'#text',value:en?'中文':'EN',parentNode:node}];}
     if(node.tagName==='link'&&get('rel')?.value==='canonical')set('href',origin+(en?'/en':'')+normalized);

@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { useId } from "react";
 import { Button } from "../button";
 import { PlaybookDemoCard } from "./demo-card";
@@ -7,15 +8,17 @@ const INNER_CONCENTRIC_RADIUS_PX = 12;
 const INNER_MATCHED_RADIUS_PX = OUTER_RADIUS_PX;
 
 function SubscribeField({ concentric = false }: { concentric?: boolean }) {
+  const localizeUi = useUiTree();
+
   const inputId = useId();
   const innerRadiusPx = concentric
     ? INNER_CONCENTRIC_RADIUS_PX
     : INNER_MATCHED_RADIUS_PX;
 
-  return (
+  return localizeUi(
     <div className="flex h-full items-center justify-center">
       <div
-        className="focus-within:ring-content-primary relative flex w-96 items-center bg-surface-default p-1 shadow-2xs ring-1 ring-line-default transition-shadow focus-within:ring-2"
+        className="focus-within:ring-content-primary bg-surface-default ring-line-default relative flex w-96 items-center p-1 shadow-2xs ring-1 transition-shadow focus-within:ring-2"
         style={{ borderRadius: OUTER_RADIUS_PX }}
       >
         <label htmlFor={inputId} className="sr-only">
@@ -38,7 +41,7 @@ function SubscribeField({ concentric = false }: { concentric?: boolean }) {
           Subscribe
         </Button>
       </div>
-    </div>
+    </div>,
   );
 }
 

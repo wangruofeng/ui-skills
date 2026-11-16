@@ -1,14 +1,17 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { PlaybookDemoCard } from "./demo-card";
 
 function DisplayHeading({ tuned = false }: { tuned?: boolean }) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <h2
-      className={`text-content-primary text-3xl font-medium leading-tight ${
+      className={`text-content-primary text-3xl leading-tight font-medium ${
         tuned ? "tracking-tight" : "tracking-wide"
       }`}
     >
       Better interfaces
-    </h2>
+    </h2>,
   );
 }
 

@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import { useEffect, useState } from "react";
 import {
   getApplyUrl,
@@ -23,6 +24,8 @@ export default function JobDetail({
   apiUrl: string;
   id: string;
 }) {
+  const localizeUi = useUiTree();
+
   const [job, setJob] = useState<PublicJob | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,7 +42,7 @@ export default function JobDetail({
   }, [id]);
 
   if (error) {
-    return (
+    return localizeUi(
       <div className="flex flex-col gap-3">
         <h1 className="type-h2 text-content-primary">Job unavailable</h1>
         <p className="type-body-md text-content-secondary">{error}</p>
@@ -49,15 +52,17 @@ export default function JobDetail({
         >
           Back to jobs
         </a>
-      </div>
+      </div>,
     );
   }
 
   if (!job) {
-    return <p className="type-body-md text-content-secondary">Loading job…</p>;
+    return localizeUi(
+      <p className="type-body-md text-content-secondary">Loading job…</p>,
+    );
   }
 
-  return (
+  return localizeUi(
     <article className="flex flex-col gap-8">
       <div className="flex flex-col gap-3">
         <p className="type-body-md text-content-secondary">{job.companyName}</p>
@@ -93,6 +98,6 @@ export default function JobDetail({
           All jobs
         </a>
       </div>
-    </article>
+    </article>,
   );
 }

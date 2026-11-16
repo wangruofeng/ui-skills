@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { useEffect, useState } from "react";
 import { PlaybookDemoCard } from "./demo-card";
 
@@ -8,14 +9,16 @@ function CounterValue({
   value: number;
   tabular?: boolean;
 }) {
+  const localizeUi = useUiTree();
+
   const display = (value % 1000000).toLocaleString();
 
-  return (
+  return localizeUi(
     <span
       className={`text-content-primary text-5xl font-medium tracking-tight sm:text-6xl ${tabular ? "tabular-nums" : ""}`}
     >
       {display}
-    </span>
+    </span>,
   );
 }
 

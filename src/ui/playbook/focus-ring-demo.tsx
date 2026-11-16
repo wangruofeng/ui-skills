@@ -1,8 +1,11 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { Button } from "../button";
 import { PlaybookDemoCard } from "./demo-card";
 
 function FocusButton({ withRing = false }: { withRing?: boolean }) {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <div className="flex flex-col items-center gap-3">
       <p className="text-content-secondary text-xs">Tab to focus</p>
       <Button
@@ -16,7 +19,7 @@ function FocusButton({ withRing = false }: { withRing?: boolean }) {
       >
         Continue
       </Button>
-    </div>
+    </div>,
   );
 }
 

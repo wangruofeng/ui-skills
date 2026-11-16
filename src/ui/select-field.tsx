@@ -1,3 +1,4 @@
+import { useUiTree } from "../lib/ui-localization";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { Select } from "@base-ui/react/select";
 import { useEffect, useRef, useState } from "react";
@@ -28,6 +29,8 @@ export function SelectField({
   error,
   onValueChange,
 }: SelectFieldProps) {
+  const localizeUi = useUiTree();
+
   const errorId = `${id}-error`;
   const triggerRef = useRef<HTMLButtonElement>(null);
   const [triggerWidth, setTriggerWidth] = useState<number>();
@@ -44,7 +47,7 @@ export function SelectField({
     return () => observer.disconnect();
   }, []);
 
-  return (
+  return localizeUi(
     <div className="relative flex flex-col gap-1">
       <Select.Root
         id={id}
@@ -63,7 +66,7 @@ export function SelectField({
           ref={triggerRef}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? errorId : undefined}
-          className={`type-body-md bg-surface-default text-content-primary data-placeholder:text-content-muted inline-flex h-11 w-full items-center justify-between rounded-md border px-2 text-left outline-none focus:border-[#A5A5A5]/40 data-popup-open:border-[#A5A5A5]/40 focus:outline-none focus-visible:outline-none focus-visible:ring-0 sm:h-8 ${error ? "border-content-primary" : "border-line-default"}`}
+          className={`type-body-md bg-surface-default text-content-primary data-placeholder:text-content-muted inline-flex h-11 w-full items-center justify-between rounded-md border px-2 text-left outline-none focus:border-[#A5A5A5]/40 focus:outline-none focus-visible:ring-0 focus-visible:outline-none data-popup-open:border-[#A5A5A5]/40 sm:h-8 ${error ? "border-content-primary" : "border-line-default"}`}
         >
           <Select.Value placeholder={placeholder} />
           <Select.Icon>
@@ -107,6 +110,6 @@ export function SelectField({
           {error}
         </span>
       ) : null}
-    </div>
+    </div>,
   );
 }

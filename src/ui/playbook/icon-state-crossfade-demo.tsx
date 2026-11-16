@@ -1,3 +1,4 @@
+import { useUiTree } from "../../lib/ui-localization";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../button";
@@ -7,7 +8,9 @@ const SPRING = { type: "spring" as const, duration: 0.3, bounce: 0 };
 const RESET_MS = 2000;
 
 function CopyIcon() {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <svg
       viewBox="0 0 24 24"
       className="size-4"
@@ -17,13 +20,18 @@ function CopyIcon() {
       aria-hidden="true"
     >
       <rect x="9" y="9" width="11" height="11" rx="2" />
-      <path strokeLinecap="round" d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1" />
-    </svg>
+      <path
+        strokeLinecap="round"
+        d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"
+      />
+    </svg>,
   );
 }
 
 function CheckIcon() {
-  return (
+  const localizeUi = useUiTree();
+
+  return localizeUi(
     <svg
       viewBox="0 0 24 24"
       className="size-4"
@@ -35,11 +43,13 @@ function CheckIcon() {
       aria-hidden="true"
     >
       <path d="M5 12.5 9.5 17 19 7" />
-    </svg>
+    </svg>,
   );
 }
 
 function CopyButton({ animated = false }: { animated?: boolean }) {
+  const localizeUi = useUiTree();
+
   const [copied, setCopied] = useState(false);
   const resetTimerRef = useRef<number | null>(null);
 
@@ -57,7 +67,7 @@ function CopyButton({ animated = false }: { animated?: boolean }) {
 
   const icon = copied ? <CheckIcon /> : <CopyIcon />;
 
-  return (
+  return localizeUi(
     <Button
       type="button"
       variant="outline"
@@ -85,7 +95,7 @@ function CopyButton({ animated = false }: { animated?: boolean }) {
       ) : (
         icon
       )}
-    </Button>
+    </Button>,
   );
 }
 
