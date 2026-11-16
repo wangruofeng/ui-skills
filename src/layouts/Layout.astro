@@ -228,6 +228,10 @@ const commandItems = [
         getCachedSession().then(({ data }) => { link.hidden = Boolean(data?.user); }).catch(() => {});
       }
     </script>
+    <script>
+      import { installImageFades } from "../lib/image-fade";
+      installImageFades();
+    </script>
     <script src="/fork-i18n.js" is:inline defer></script>
   </body>
 </html>
