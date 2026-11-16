@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { AccountMenu } from "../ui/account-menu";
 import CtaSection from "../ui/cta-section.astro";
 import { skills } from "../data/skills";
 import { playbook } from "../data/playbook";
@@ -160,13 +161,14 @@ const commandItems = [
               <div class="relative z-20 flex shrink-0 items-center gap-2">
                   <a href="/en/" data-language-switch class="type-body-md inline-flex h-8 items-center rounded-lg border border-line-default px-2 text-content-secondary hover:bg-fill-subtle" aria-label="Switch to English" lang="en">EN</a>
                   <a
-                    href="https://www.ui-skills.com/login"
+                    href="/login"
                     data-sign-in-link
                     class="type-body-md text-content-secondary hover:text-content-primary focus-visible:outline-content-primary inline-flex items-center rounded-full focus-visible:outline-1 focus-visible:outline-offset-2"
                   >
                     Sign in
                   </a>
 
+                  <AccountMenu client:load />
                   <button
                     type="button"
                     aria-label="Search skills and playbook"
@@ -227,6 +229,15 @@ const commandItems = [
     </div>
 
 
+    <script>
+      import { getCachedSession } from "../lib/session-client";
+      const link = document.querySelector<HTMLAnchorElement>("[data-sign-in-link]");
+      if (link) {
+        const prefix = location.pathname.startsWith("/en/") ? "/en" : "";
+        link.href = `${prefix}/login/?returnTo=${encodeURIComponent(location.pathname + location.search)}`;
+        getCachedSession().then(({ data }) => { link.hidden = Boolean(data?.user); }).catch(() => {});
+      }
+    </script>
     <script src="/fork-i18n.js" is:inline defer></script>
   </body>
 </html>

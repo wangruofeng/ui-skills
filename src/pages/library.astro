@@ -1,0 +1,18 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { SavedSkills } from "../ui/saved-skills";
+export const prerender = true;
+---
+
+<Layout
+  title="My favorites | UI Skills"
+  description="Your saved UI skills."
+  robots="noindex,nofollow"
+  showNewsletter={false}
+>
+  <div class="container-3xl pt-20 pb-12">
+    <h1 class="type-h1 text-content-primary mb-8">My favorites</h1><SavedSkills
+      client:load
+    />
+  </div>
+</Layout>

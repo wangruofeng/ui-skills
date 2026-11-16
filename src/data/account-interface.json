@@ -1,0 +1,23 @@
+{
+  "Continue with GitHub": "使用 GitHub 登录",
+  "Signing in…": "正在登录…",
+  "Sign in to save skills across devices.": "登录后即可跨设备保存与同步技能收藏。",
+  "GitHub sign-in is not available yet.": "GitHub 登录暂未配置完成。",
+  "Unable to check sign-in. Reload to retry.": "无法检查登录状态，请刷新重试。",
+  "Sign-in was not completed. Please try again.": "登录未完成，请重试。",
+  "Unable to start sign-in. Please try again.": "无法发起登录，请重试。",
+  "Loading favorites…": "正在加载收藏…",
+  "Sign in to view your favorites.": "登录后查看你的收藏。",
+  "Star a skill to save it here.": "在技能详情点击星标，即可收藏到这里。",
+  "Add to favorites": "收藏技能",
+  "Remove from favorites": "取消收藏",
+  "Remove": "移除",
+  "Retry": "重试",
+  "Unable to load favorites. Please try again.": "无法加载收藏，请重试。",
+  "Unable to update favorites. Please try again.": "无法更新收藏，请重试。",
+  "Sign-out failed. Please try again.": "退出登录失败，请重试。",
+  "My favorites": "我的收藏",
+  "Sign out": "退出登录",
+  "Account": "账号",
+  "Browse skills": "浏览技能"
+}

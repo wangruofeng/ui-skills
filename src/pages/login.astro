@@ -1,0 +1,21 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { LoginPanel } from "../ui/login-panel";
+export const prerender = true;
+---
+
+<Layout
+  title="Sign in | UI Skills"
+  description="Sign in with GitHub to save your favorite skills."
+  robots="noindex,nofollow"
+  showNewsletter={false}
+>
+  <div
+    class="container-3xl flex min-h-dvh flex-col items-center justify-center gap-8 py-20"
+  >
+    <h1 class="type-h1 text-content-primary text-center">
+      Log in to UI Skills
+    </h1>
+    <div class="w-full max-w-xs"><LoginPanel client:load /></div>
+  </div>
+</Layout>
