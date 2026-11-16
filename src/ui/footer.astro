@@ -178,9 +178,9 @@ const linkClass =
 <footer id="site-footer" class="border-line-default mt-24 border-t sm:mt-32">
   <div class="container-7xl type-body-md py-10 sm:py-12">
     <div
-      class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] lg:gap-16"
+      class="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:grid-cols-5 lg:gap-y-12"
     >
-      <div>
+      <div class="col-span-2 min-w-0 sm:col-span-3 lg:col-span-1">
         <a
           href="/"
           class="text-content-primary inline-flex items-center gap-2 font-[450]"
@@ -200,10 +200,7 @@ const linkClass =
           with agents.
         </p>
       </div>
-      <nav
-        aria-label="Footer navigation"
-        class="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4"
-      >
+      <nav aria-label="Footer navigation" class="contents">
         {
           navSections.map((section) => (
             <div class="min-w-0">
@@ -226,11 +223,6 @@ const linkClass =
           ))
         }
       </nav>
-    </div>
-
-    <div
-      class="border-line-default mt-10 grid grid-cols-2 gap-x-8 gap-y-8 border-t pt-8 sm:grid-cols-3 lg:mt-12 lg:grid-cols-5 lg:pt-10"
-    >
       {
         discoverySections.map((section) => (
           <div class="min-w-0">
