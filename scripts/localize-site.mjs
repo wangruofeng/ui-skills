@@ -31,6 +31,10 @@ for(const file of files){
     if(node.tagName==='meta'&&['og:url'].includes(get('property')?.value))set('content',origin+(en?'/en':'')+normalized);
     if(node.tagName==='meta'&&!en&&['description','og:title','og:description','twitter:title','twitter:description'].includes(get('name')?.value??get('property')?.value))set('content',text(get('content').value));
    }
+   const englishDemo=node.childNodes?.find(c=>c.tagName==='template'&&c.attrs.some(a=>a.name==='data-english-playbook-demo'));
+   if(englishDemo){
+    node.childNodes=en?englishDemo.content.childNodes:node.childNodes.filter(c=>c!==englishDemo);
+   }
    for(const c of node.childNodes??[])visit(c,keep);
   }visit(doc);
   if(head&&!is404&&!file.startsWith('dist/agent/'))for(const [lang,prefix] of [['zh-CN',''],['en','/en'],['x-default','']])head.childNodes.push({nodeName:'link',tagName:'link',namespaceURI:'http://www.w3.org/1999/xhtml',attrs:[{name:'rel',value:'alternate'},{name:'hreflang',value:lang},{name:'href',value:origin+prefix+normalized}],childNodes:[],parentNode:head});

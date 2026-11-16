@@ -1,4 +1,7 @@
 ---
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import translations from "../../public/i18n/zh-CN.json";
 import type { PlaybookEntry } from "../data/playbook.ts";
 import PlaybookDemoRouter from "./playbook/demo-router.tsx";
 
@@ -7,8 +10,27 @@ type Props = {
 };
 
 const { entry } = Astro.props as Props;
+const dictionary: Record<string, string> = {};
+
+// Collect the translations used on the initial render so the island can
+// hydrate without downloading the full catalog first.
+renderToStaticMarkup(
+  createElement(PlaybookDemoRouter, {
+    slug: entry.slug,
+    dictionary: new Proxy<Record<string, string>>(translations, {
+      get(words, key: string) {
+        const value = words[key];
+        if (Object.hasOwn(words, key)) dictionary[key] = value;
+        return value;
+      },
+    }),
+  }),
+);
 ---
 
 <div class="min-h-84 sm:min-h-88">
-  <PlaybookDemoRouter client:load slug={entry.slug} />
+  <PlaybookDemoRouter client:load slug={entry.slug} dictionary={dictionary} />
+  <template data-english-playbook-demo>
+    <PlaybookDemoRouter client:load slug={entry.slug} />
+  </template>
 </div>
