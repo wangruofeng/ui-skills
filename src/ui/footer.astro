@@ -172,15 +172,15 @@ const discoverySections: FooterSection[] = [
 ];
 
 const linkClass =
-  "text-content-secondary hover:text-content-primary transition-colors duration-150";
+  "text-content-secondary hover:text-content-primary hover:bg-fill-subtle focus-visible:outline-content-primary -mx-2 block rounded px-2 py-1 focus-visible:outline-1 focus-visible:outline-offset-2";
 ---
 
-<footer id="site-footer" class="border-line-default mt-32 border-t">
-  <div class="container-7xl type-body-md pt-12 pb-8">
+<footer id="site-footer" class="border-line-default mt-24 border-t sm:mt-32">
+  <div class="container-7xl type-body-md py-10 sm:py-12">
     <div
-      class="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-5"
+      class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] lg:gap-16"
     >
-      <div class="col-span-2 sm:col-span-3 lg:col-span-1">
+      <div>
         <a
           href="/"
           class="text-content-primary inline-flex items-center gap-2 font-[450]"
@@ -195,32 +195,60 @@ const linkClass =
           />
           <span>UI Skills</span>
         </a>
-        <p class="text-content-secondary mt-3 max-w-60 text-pretty">
+        <p class="text-content-secondary mt-3 max-w-72 text-pretty">
           Curated skills, guides, and resources for building better interfaces
           with agents.
         </p>
       </div>
+      <nav
+        aria-label="Footer navigation"
+        class="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4"
+      >
+        {
+          navSections.map((section) => (
+            <div class="min-w-0">
+              <h3 class="text-content-primary font-medium">{section.title}</h3>
+              <ul class="mt-3 space-y-1">
+                {section.links.map((link) => (
+                  <li>
+                    <a
+                      href={link.href}
+                      target={link.external ? "_blank" : undefined}
+                      rel={link.external ? "noopener noreferrer" : undefined}
+                      class={linkClass}
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </nav>
+    </div>
+
+    <div
+      class="border-line-default mt-10 grid grid-cols-2 gap-x-8 gap-y-8 border-t pt-8 sm:grid-cols-3 lg:mt-12 lg:grid-cols-5 lg:pt-10"
+    >
       {
-        [...navSections, ...discoverySections].map((section) => (
+        discoverySections.map((section) => (
           <div class="min-w-0">
-            <h3 class="text-content-primary font-[450]">{section.title}</h3>
-            <ul class="mt-3 space-y-2">
+            <h3 class="text-content-primary font-medium">{section.title}</h3>
+            <ul class="mt-3 space-y-1">
               {section.links.map((link) => (
                 <li>
-                  <a
-                    href={link.href}
-                    target={link.external ? "_blank" : undefined}
-                    rel={link.external ? "noopener noreferrer" : undefined}
-                    title={link.label}
-                    class={`${linkClass} block truncate`}
-                  >
+                  <a href={link.href} class={`${linkClass} break-words`}>
                     {link.label}
                   </a>
                 </li>
               ))}
               {section.more && (
-                <li>
-                  <a href={section.more.href} class={linkClass}>
+                <li class="pt-2">
+                  <a
+                    href={section.more.href}
+                    class={`${linkClass} text-content-primary`}
+                  >
                     {section.more.label}
                   </a>
                 </li>
@@ -231,11 +259,20 @@ const linkClass =
       }
     </div>
 
-    <p
-      class="border-line-default text-content-secondary mt-16 border-t pt-6 text-center"
+    <div
+      class="border-line-default type-body-sm text-content-secondary mt-10 flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-start sm:justify-between sm:gap-8 lg:mt-12"
     >
-      ©{currentYear} UI Skills
-    </p>
+      <p class="shrink-0">©{currentYear} UI Skills</p>
+      <p class="max-w-2xl leading-relaxed text-pretty sm:text-right">
+        Independent open-source mirror by <a
+          class="hover:text-content-primary focus-visible:outline-content-primary underline underline-offset-2 focus-visible:outline-1 focus-visible:outline-offset-2"
+          href="https://github.com/wangruofeng/ui-skills">wangruofeng</a
+        >. Based on <a
+          class="hover:text-content-primary focus-visible:outline-content-primary underline underline-offset-2 focus-visible:outline-1 focus-visible:outline-offset-2"
+          href="https://github.com/ibelick/ui-skills"
+          >Julien Thibeaut’s UI Skills</a
+        > · MIT. Skill content remains in its original language.
+      </p>
+    </div>
   </div>
-  <p class="type-body-sm mt-8 text-content-secondary">Independent open-source mirror by <a class="underline" href="https://github.com/wangruofeng/ui-skills">wangruofeng</a>. Based on <a class="underline" href="https://github.com/ibelick/ui-skills">Julien Thibeaut’s UI Skills</a> · MIT. Skill content remains in its original language.</p>
 </footer>
