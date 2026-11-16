@@ -1,3 +1,4 @@
+import { StarIcon } from "@heroicons/react/24/solid";
 import { useAccountText } from "../lib/account-interface";
 import { useEffect, useState } from "react";
 import { getCachedSession } from "../lib/session-client";
@@ -128,10 +129,14 @@ export function SavedSkills() {
           <button
             type="button"
             disabled={pending !== null}
+            aria-label={t("Remove from favorites")}
+            title={t("Remove from favorites")}
+            aria-pressed={true}
+            aria-busy={pending === skill.pathSlug}
             onClick={() => remove(skill.pathSlug)}
-            className="type-body-sm text-content-secondary hover:bg-fill-subtle shrink-0 rounded-lg px-2 py-2 disabled:opacity-50"
+            className="hover:bg-fill-subtle focus-visible:outline-content-primary inline-flex size-9 shrink-0 items-center justify-center rounded-lg text-yellow-500 focus-visible:outline-1 focus-visible:outline-offset-2 disabled:opacity-50"
           >
-            {t("Remove")}
+            <StarIcon className="size-4" aria-hidden="true" />
           </button>
         </div>
       ))}
