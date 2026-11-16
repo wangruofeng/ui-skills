@@ -1,6 +1,10 @@
 (() => {
   const zh = !/^\/en(?:\/|$)/.test(location.pathname);
   const words = {
+    'Footer navigation':'页脚导航',
+    'Sitemap':'站点地图',
+    '· MIT.':'· MIT。',
+
     'Log in to UI Skills':'登录 UI Skills',
     'Continue with GitHub':'使用 GitHub 登录',
     'Sign in | UI Skills':'登录 | UI Skills',

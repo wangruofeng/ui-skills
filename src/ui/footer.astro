@@ -171,106 +171,177 @@ const discoverySections: FooterSection[] = [
   },
 ];
 
+const footerColumns = [
+  [navSections[0], discoverySections[0]],
+  [navSections[1], discoverySections[1]],
+  [discoverySections[2], discoverySections[3]],
+  [navSections[2], navSections[3]],
+  [discoverySections[4]],
+];
 const linkClass =
-  "text-content-secondary hover:text-content-primary hover:bg-fill-subtle focus-visible:outline-content-primary -mx-2 block rounded px-2 py-1 focus-visible:outline-1 focus-visible:outline-offset-2";
+  "text-content-secondary hover:text-content-primary focus-visible:outline-content-primary block w-fit max-w-full break-words rounded py-1 hover:underline focus-visible:outline-1 focus-visible:outline-offset-2";
 ---
 
-<footer id="site-footer" class="border-line-default mt-24 border-t sm:mt-32">
-  <div class="footer-content container-7xl type-body-md py-10 sm:py-12">
+<footer id="site-footer" class="bg-surface-subtle mt-24 sm:mt-32">
+  <div class="footer-content type-body-sm mx-auto w-full max-w-5xl">
     <div
-      class="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:grid-cols-5 lg:gap-y-12"
+      class="border-line-default flex flex-col gap-3 border-b py-6 sm:flex-row sm:items-center sm:gap-6"
     >
-      <div class="col-span-2 min-w-0 sm:col-span-3 lg:col-span-1">
-        <a
-          href="/"
-          class="text-content-primary inline-flex items-center gap-2 font-[450]"
-        >
-          <img
-            src="/uiskills-logo-light.webp"
-            alt=""
-            aria-hidden="true"
-            class="h-4 w-4"
-            width="16"
-            height="16"
-          />
-          <span>UI Skills</span>
-        </a>
-        <p class="text-content-secondary mt-3 max-w-72 text-pretty">
-          Curated skills, guides, and resources for building better interfaces
-          with agents.
-        </p>
-      </div>
-      <nav aria-label="Footer navigation" class="contents">
-        {
-          navSections.map((section) => (
-            <div class="min-w-0">
-              <h3 class="text-content-primary font-medium">{section.title}</h3>
-              <ul class="mt-3 space-y-1">
-                {section.links.map((link) => (
-                  <li>
-                    <a
-                      href={link.href}
-                      target={link.external ? "_blank" : undefined}
-                      rel={link.external ? "noopener noreferrer" : undefined}
-                      class={linkClass}
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))
-        }
-      </nav>
+      <a
+        href="/"
+        class="text-content-primary inline-flex shrink-0 items-center gap-2 font-medium"
+      >
+        <img
+          src="/uiskills-logo-light.webp"
+          alt=""
+          aria-hidden="true"
+          class="size-4"
+          width="16"
+          height="16"
+        />
+        <span>UI Skills</span>
+      </a>
+      <p class="text-content-secondary max-w-md text-pretty">
+        Curated skills, guides, and resources for building better interfaces
+        with agents.
+      </p>
+    </div>
+
+    <nav
+      aria-label="Footer navigation"
+      class="footer-directory grid md:grid-cols-5 md:gap-8 md:py-6"
+    >
       {
-        discoverySections.map((section) => (
-          <div class="min-w-0">
-            <h3 class="text-content-primary font-medium">{section.title}</h3>
-            <ul class="mt-3 space-y-1">
-              {section.links.map((link) => (
-                <li>
-                  <a href={link.href} class={`${linkClass} break-words`}>
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-              {section.more && (
-                <li class="pt-2">
-                  <a
-                    href={section.more.href}
-                    class={`${linkClass} text-content-primary`}
+        footerColumns.map((column) => (
+          <div class="min-w-0 md:space-y-6">
+            {column.map((section) => (
+              <details class="footer-section" open>
+                <summary class="text-content-primary flex list-none items-center justify-between gap-4 font-medium">
+                  <span>{section.title}</span>
+                  <svg
+                    class="footer-chevron size-3 shrink-0 md:hidden"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    aria-hidden="true"
                   >
-                    {section.more.label}
-                  </a>
-                </li>
-              )}
-            </ul>
+                    <path
+                      d="m3 4.5 3 3 3-3"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </summary>
+                <ul class="pb-4 pl-2 md:mt-2 md:pb-0 md:pl-0">
+                  {section.links.map((link) => (
+                    <li>
+                      <a
+                        href={link.href}
+                        target={link.external ? "_blank" : undefined}
+                        rel={link.external ? "noopener noreferrer" : undefined}
+                        class={linkClass}
+                      >
+                        {link.label}
+                      </a>
+                    </li>
+                  ))}
+                  {section.more && (
+                    <li class="pt-1">
+                      <a href={section.more.href} class={linkClass}>
+                        {section.more.label}
+                      </a>
+                    </li>
+                  )}
+                </ul>
+              </details>
+            ))}
           </div>
         ))
       }
-    </div>
+    </nav>
 
-    <div
-      class="border-line-default type-body-sm text-content-secondary mt-10 flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-start sm:justify-between sm:gap-8 lg:mt-12"
-    >
-      <p class="shrink-0">©{currentYear} UI Skills</p>
-      <p class="max-w-sm leading-relaxed text-pretty sm:text-right">
-        Independent open-source mirror by <a
-          class="hover:text-content-primary focus-visible:outline-content-primary underline underline-offset-2 focus-visible:outline-1 focus-visible:outline-offset-2"
-          href="https://github.com/wangruofeng/ui-skills">wangruofeng</a
-        >. Based on <a
-          class="hover:text-content-primary focus-visible:outline-content-primary underline underline-offset-2 focus-visible:outline-1 focus-visible:outline-offset-2"
-          href="https://github.com/ibelick/ui-skills"
-          >Julien Thibeaut’s UI Skills</a
-        > · MIT. Skill content remains in its original language.
+    <div class="text-content-secondary py-5 md:pt-3">
+      <p class="max-w-sm leading-relaxed text-pretty">
+        <span class="block"
+          >Independent open-source mirror by <a
+            class="text-content-primary underline underline-offset-2"
+            href="https://github.com/wangruofeng/ui-skills">wangruofeng</a
+          >.</span
+        >
+        <span class="block"
+          >Based on <a
+            class="text-content-primary underline underline-offset-2"
+            href="https://github.com/ibelick/ui-skills"
+            >Julien Thibeaut’s UI Skills</a
+          > · MIT.</span
+        >
+        <span class="block"
+          >Skill content remains in its original language.</span
+        >
       </p>
+    </div>
+    <div
+      class="border-line-default text-content-secondary flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-t py-4"
+    >
+      <p>©{currentYear} UI Skills</p>
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <a
+          href="https://github.com/wangruofeng/ui-skills"
+          class="hover:text-content-primary hover:underline">GitHub</a
+        >
+        <span class="bg-line-default h-3 w-px" aria-hidden="true"></span>
+        <a
+          href="https://github.com/wangruofeng/ui-skills/blob/main/LICENSE"
+          class="hover:text-content-primary hover:underline">MIT</a
+        >
+        <span class="bg-line-default h-3 w-px" aria-hidden="true"></span>
+        <a
+          href="/sitemap.xml"
+          class="hover:text-content-primary hover:underline">Sitemap</a
+        >
+      </div>
     </div>
   </div>
 </footer>
 
+<script>
+  const desktopFooter = window.matchMedia("(min-width: 768px)");
+  const sections = document.querySelectorAll<HTMLDetailsElement>(
+    "#site-footer .footer-section",
+  );
+  function syncFooterSections() {
+    sections.forEach((section) => {
+      section.open = desktopFooter.matches;
+      const summary = section.querySelector("summary");
+      if (summary) summary.tabIndex = desktopFooter.matches ? -1 : 0;
+    });
+  }
+  syncFooterSections();
+  desktopFooter.addEventListener("change", syncFooterSections);
+</script>
+
 <style>
   .footer-content {
-    padding-inline: clamp(1.5rem, 4vw, 4rem);
+    padding-inline: clamp(1.5rem, 4vw, 3rem);
+  }
+  .footer-section summary::-webkit-details-marker {
+    display: none;
+  }
+  @media (max-width: 767px) {
+    .footer-section {
+      border-bottom: 1px solid var(--color-line-default);
+    }
+    .footer-section summary {
+      padding-block: 0.875rem;
+      cursor: pointer;
+    }
+    .footer-section[open] .footer-chevron {
+      transform: rotate(180deg);
+    }
+  }
+  @media (min-width: 768px) {
+    .footer-section summary {
+      pointer-events: none;
+    }
   }
 </style>
