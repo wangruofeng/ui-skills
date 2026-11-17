@@ -1,5 +1,5 @@
 import { UiLocaleContext } from "../lib/ui-localization";
-import { loadTranslations, translateText } from "../../public/i18n-core.mjs";
+import { loadTranslations, translateText } from "../lib/i18n-core.mjs";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { useAccountText } from "../lib/account-interface";
 import { useEffect, useState } from "react";

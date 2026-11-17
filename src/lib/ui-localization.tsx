@@ -1,4 +1,5 @@
 import {
+  Children,
   cloneElement,
   createContext,
   isValidElement,
@@ -12,7 +13,7 @@ import {
   loadTranslations,
   translateText,
   localizedHref,
-} from "../../public/i18n-core.mjs";
+} from "./i18n-core.mjs";
 type Dictionary = Record<string, string>;
 
 export const UiLocaleContext = createContext<{
@@ -71,7 +72,7 @@ export function localizeUiTree(
   if (typeof props.href === "string")
     next.href = localizedHref(props.href, chinese);
   if (props.children !== undefined) next.children = Array.isArray(props.children)
-    ? props.children.map(child => localizeUiTree(child, t, chinese))
+    ? Children.map(props.children, child => localizeUiTree(child, t, chinese))
     : localizeUiTree(props.children as ReactNode, t, chinese);
   return cloneElement(node, next);
 }

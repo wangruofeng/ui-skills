@@ -3,7 +3,7 @@ import {readFile,writeFile,readdir,mkdir} from 'node:fs/promises';
 import path from 'node:path';
 import {parse,serialize} from 'parse5';
 const origin='https://ui-skills.wangruofeng007.com';
-import {translateText} from '../public/i18n-core.mjs';
+import {translateText} from '../src/lib/i18n-core.mjs';
 const translations=await readFile('public/i18n/zh-CN.json','utf8');
 const dictionary=JSON.parse(translations);
 const contentVersion=value=>createHash('sha256').update(value).digest('hex').slice(0,16);

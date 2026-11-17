@@ -1,4 +1,4 @@
-import { loadPublicJson } from "../../public/public-data.mjs";
+import { loadPublicJson } from "./public-data.mjs";
 
 export function loadSearchIndex<T>() {
   return loadPublicJson<T[]>(
