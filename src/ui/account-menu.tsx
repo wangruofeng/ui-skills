@@ -20,17 +20,20 @@ export function AccountMenu() {
   const localizeUi = useUiTree();
 
   const t = useAccountText();
-  const [user, setUser] = useState<AccountUser | null>(null);
+  const [user, setUser] = useState<AccountUser | null | undefined>(undefined);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
     getCachedSession()
-      .then(({ data }) => {
-        if (!active) return;
+      .then(({ data, error }) => {
+        if (!active || error) return;
         const sessionUser = data?.user;
-        if (!sessionUser) return;
+        if (!sessionUser) {
+          setUser(null);
+          return;
+        }
         const label = sessionUser.name || sessionUser.email;
         setUser({
           email: sessionUser.email,
@@ -62,7 +65,22 @@ export function AccountMenu() {
       });
   };
 
-  if (!user) return null;
+  if (user === undefined) {
+    return <span aria-hidden="true" className="inline-block size-8 shrink-0" />;
+  }
+
+  if (user === null) {
+    const prefix = /^\/en(?:\/|$)/.test(location.pathname) ? "/en" : "";
+    const returnTo = encodeURIComponent(location.pathname + location.search);
+    return (
+      <a
+        href={`${prefix}/login/?returnTo=${returnTo}`}
+        className="type-body-md text-content-secondary hover:text-content-primary focus-visible:outline-content-primary inline-flex items-center rounded-full focus-visible:outline-1 focus-visible:outline-offset-2"
+      >
+        {t("Sign in")}
+      </a>
+    );
+  }
 
   return localizeUi(
     <Menu.Root>

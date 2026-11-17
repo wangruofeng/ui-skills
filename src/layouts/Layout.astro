@@ -157,14 +157,6 @@ const commandItems = [
               </a>
               <div class="relative z-20 flex shrink-0 items-center gap-2">
                   <a href="/en/" data-language-switch class="type-body-md text-content-secondary hover:text-content-primary hover:bg-fill-subtle focus-visible:outline-content-primary inline-flex h-8 min-w-8 items-center justify-center rounded px-2 focus-visible:outline-1 focus-visible:outline-offset-2" aria-label="Switch to English" lang="en">EN</a>
-                  <a
-                    href="/login"
-                    data-sign-in-link
-                    class="type-body-md text-content-secondary hover:text-content-primary focus-visible:outline-content-primary inline-flex items-center rounded-full focus-visible:outline-1 focus-visible:outline-offset-2"
-                  >
-                    Sign in
-                  </a>
-
                   <AccountMenu client:load />
                   <button
                     type="button"
@@ -219,15 +211,6 @@ const commandItems = [
     </div>
 
 
-    <script>
-      import { getCachedSession } from "../lib/session-client";
-      const link = document.querySelector<HTMLAnchorElement>("[data-sign-in-link]");
-      if (link) {
-        const prefix = location.pathname.startsWith("/en/") ? "/en" : "";
-        link.href = `${prefix}/login/?returnTo=${encodeURIComponent(location.pathname + location.search)}`;
-        getCachedSession().then(({ data }) => { link.hidden = Boolean(data?.user); }).catch(() => {});
-      }
-    </script>
     <script>
       import { installImageFades } from "../lib/image-fade";
       installImageFades();
