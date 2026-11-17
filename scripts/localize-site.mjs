@@ -31,9 +31,9 @@ for(const file of files){
     if(node.tagName==='meta'&&['og:url'].includes(get('property')?.value))set('content',origin+(en?'/en':'')+normalized);
     if(node.tagName==='meta'&&!en&&['description','og:title','og:description','twitter:title','twitter:description'].includes(get('name')?.value??get('property')?.value))set('content',text(get('content').value));
    }
-   const englishDemo=node.childNodes?.find(c=>c.tagName==='template'&&c.attrs.some(a=>a.name==='data-english-playbook-demo'));
-   if(englishDemo){
-    node.childNodes=en?englishDemo.content.childNodes:node.childNodes.filter(c=>c!==englishDemo);
+   const englishVariant=node.childNodes?.find(c=>c.tagName==='template'&&c.attrs.some(a=>a.name==='data-english-playbook-demo'||a.name==='data-english-variant'));
+   if(englishVariant){
+    node.childNodes=en?englishVariant.content.childNodes:node.childNodes.filter(c=>c!==englishVariant);
    }
    for(const c of node.childNodes??[])visit(c,keep);
   }visit(doc);

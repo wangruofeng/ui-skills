@@ -1,4 +1,5 @@
-import { useUiTree } from "../lib/ui-localization";
+import { UiLocaleContext } from "../lib/ui-localization";
+import { loadTranslations, translateText } from "../../public/i18n-core.mjs";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { useAccountText } from "../lib/account-interface";
 import { useEffect, useState } from "react";
@@ -15,10 +16,22 @@ type Entry = {
   description?: string;
   kind: string;
 };
-export function SavedSkills() {
-  const localizeUi = useUiTree();
+export function SavedSkills({
+  dictionary,
+}: {
+  dictionary?: Record<string, string>;
+}) {
+  const chinese = dictionary !== undefined;
+  return (
+    <UiLocaleContext.Provider value={{ chinese, dictionary: dictionary ?? {} }}>
+      <SavedSkillsContent chinese={chinese} />
+    </UiLocaleContext.Provider>
+  );
+}
 
+function SavedSkillsContent({ chinese }: { chinese: boolean }) {
   const t = useAccountText();
+  const prefix = chinese ? "" : "/en";
   const [skills, setSkills] = useState<Entry[]>([]);
   const [phase, setPhase] = useState("loading");
   const [error, setError] = useState("");
@@ -35,21 +48,32 @@ export function SavedSkills() {
         setPhase("signed-out");
         return;
       }
-      const [result, catalog] = await Promise.all([
+      const [result, catalog, descriptions] = await Promise.all([
         fetchLibrary(),
         fetch("/data/search-index.json").then((r) => {
           if (!r.ok) throw Error();
           return r.json() as Promise<Entry[]>;
         }),
+        chinese ? loadTranslations().catch(() => null) : null,
       ]);
       const byPath = new Map(
         catalog.filter((s) => s.kind === "skill").map((s) => [s.pathSlug, s]),
       );
       if (active) {
         setSkills(
-          result.library.savedSkillPaths.flatMap((path) =>
-            byPath.has(path) ? [byPath.get(path)!] : [],
-          ),
+          result.library.savedSkillPaths.flatMap((path) => {
+            const skill = byPath.get(path);
+            if (!skill) return [];
+            if (!chinese || !skill.description) return [skill];
+            return [
+              {
+                ...skill,
+                description: descriptions
+                  ? translateText(skill.description, descriptions)
+                  : undefined,
+              },
+            ];
+          }),
         );
         setPhase("ready");
       }
@@ -62,7 +86,7 @@ export function SavedSkills() {
     return () => {
       active = false;
     };
-  }, [retry]);
+  }, [chinese, retry]);
   async function remove(path: string) {
     setPending(path);
     setError("");
@@ -80,7 +104,7 @@ export function SavedSkills() {
       setPending(null);
     }
   }
-  return localizeUi(
+  return (
     <div className="flex flex-col gap-4">
       {phase === "loading" && (
         <p role="status" className="type-body-md text-content-secondary">
@@ -93,12 +117,7 @@ export function SavedSkills() {
             {t("Sign in to view your favorites.")}
           </p>
           <a
-            href={
-              typeof location !== "undefined" &&
-              location.pathname.startsWith("/en/")
-                ? "/en/login/?returnTo=/en/library/"
-                : "/login/?returnTo=/library/"
-            }
+            href={`${prefix}/login/?returnTo=${prefix}/library/`}
             className="type-body-md bg-fill-inverse text-content-inverse rounded-lg px-3 py-2"
           >
             {t("Continue with GitHub")}
@@ -110,7 +129,7 @@ export function SavedSkills() {
           <p className="type-body-md text-content-secondary">
             {t("Star a skill to save it here.")}
           </p>
-          <a className="type-body-md underline" href="/skills">
+          <a className="type-body-md underline" href={`${prefix}/skills`}>
             {t("Browse skills")}
           </a>
         </div>
@@ -120,14 +139,19 @@ export function SavedSkills() {
           key={skill.pathSlug}
           className="border-line-default flex min-w-0 items-center gap-3 border-b py-4"
         >
-          <a className="min-w-0 flex-1" href={`/skills/${skill.pathSlug}`}>
+          <a
+            className="min-w-0 flex-1"
+            href={`${prefix}/skills/${skill.pathSlug}`}
+          >
             <div className="type-body-md text-content-primary">
               {skill.slug}{" "}
               <span className="text-content-muted">{skill.sourceLabel}</span>
             </div>
-            <p className="type-body-sm text-content-secondary line-clamp-2">
-              {skill.description}
-            </p>
+            {skill.description && (
+              <p className="type-body-sm text-content-secondary line-clamp-2">
+                {skill.description}
+              </p>
+            )}
           </a>
           <button
             type="button"
@@ -156,6 +180,6 @@ export function SavedSkills() {
           )}
         </div>
       )}
-    </div>,
+    </div>
   );
 }

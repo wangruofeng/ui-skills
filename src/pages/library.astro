@@ -1,7 +1,24 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { SavedSkills } from "../ui/saved-skills";
+import translations from "../../public/i18n/zh-CN.json";
+
 export const prerender = true;
+
+const messages = [
+  "Loading favorites…",
+  "Sign in to view your favorites.",
+  "Continue with GitHub",
+  "Star a skill to save it here.",
+  "Browse skills",
+  "Remove from favorites",
+  "Unable to load favorites. Please try again.",
+  "Unable to update favorites. Please try again.",
+  "Retry",
+] as const;
+const dictionary = Object.fromEntries(
+  messages.map((message) => [message, translations[message]]),
+);
 ---
 
 <Layout
@@ -10,8 +27,12 @@ export const prerender = true;
   robots="noindex,nofollow"
 >
   <div class="container-3xl pt-20 pb-12">
-    <h1 class="type-h1 text-content-primary mb-8">My favorites</h1><SavedSkills
-      client:load
-    />
+    <h1 class="type-h1 text-content-primary mb-8">My favorites</h1>
+    <div>
+      <SavedSkills client:load dictionary={dictionary} />
+      <template data-english-variant>
+        <SavedSkills client:load />
+      </template>
+    </div>
   </div>
 </Layout>
