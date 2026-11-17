@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { authClient } from "../lib/auth-client";
 import { safeReturnTo } from "../lib/auth-config";
 import { clearLibraryCache } from "../lib/library-client";
+import { clearCachedSession } from "../lib/session-client";
 export function LoginPanel() {
   const localizeUi = useUiTree();
 
@@ -35,6 +36,7 @@ export function LoginPanel() {
     setError("");
     try {
       clearLibraryCache();
+      clearCachedSession();
       const params = new URLSearchParams(location.search);
       const prefix = location.pathname.startsWith("/en/") ? "/en" : "";
       const result = await authClient.signIn.social({
