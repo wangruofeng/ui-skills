@@ -4,6 +4,7 @@ import { StarIcon } from "@heroicons/react/24/solid";
 import { useAccountText } from "../lib/account-interface";
 import { useEffect, useState } from "react";
 import { getCachedSession } from "../lib/session-client";
+import { loadSearchIndex } from "../lib/search-index-client";
 import {
   fetchLibrary,
   unsaveSkill,
@@ -50,10 +51,7 @@ function SavedSkillsContent({ chinese }: { chinese: boolean }) {
       }
       const [result, catalog, descriptions] = await Promise.all([
         fetchLibrary(),
-        fetch("/data/search-index.json").then((r) => {
-          if (!r.ok) throw Error();
-          return r.json() as Promise<Entry[]>;
-        }),
+        loadSearchIndex<Entry>(),
         chinese ? loadTranslations().catch(() => null) : null,
       ]);
       const byPath = new Map(
