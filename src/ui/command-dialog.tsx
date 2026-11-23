@@ -1,3 +1,4 @@
+import { loadSearchIndex } from "../lib/search-index-client";
 import { useUiText, useUiTree } from "../lib/ui-localization";
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
@@ -142,14 +143,9 @@ export function CommandDialog({
     const controller = new AbortController();
     setIndexLoading(true);
     setIndexError(false);
-    fetch("/data/search-index.json", { signal: controller.signal })
-      .then((response) => {
-        if (!response.ok) throw new Error("Search index unavailable");
-        return response.json();
-      })
-      .then((entries: CommandItem[]) => {
-        if (!Array.isArray(entries)) throw new Error("Invalid search index");
-        setItems(entries);
+    loadSearchIndex<CommandItem>()
+      .then((entries) => {
+        if (!controller.signal.aborted) setItems(entries);
       })
       .catch(() => {
         if (!controller.signal.aborted) setIndexError(true);

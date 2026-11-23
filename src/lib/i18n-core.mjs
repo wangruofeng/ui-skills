@@ -1,3 +1,5 @@
+import { loadPublicJson } from './public-data.mjs';
+
 /** Shared by prerendering, interactive React UI and progressive enhancement. */
 export const normalizeText = (value) => value.replace(/\s+/g, ' ').trim();
 export function translateText(value, dictionary) {
@@ -26,15 +28,13 @@ export function translateText(value, dictionary) {
 }
 export function localizedHref(value, chinese) {
   if (!value?.startsWith('/') || value.startsWith('//')) return value;
-  if (/^\/(?:jobs|sponsor|oauth)(?:\/|$)|^\/mcp(?:\/rpc)?(?:[?#]|$)/.test(value)) return 'https://www.ui-skills.com' + value;
+  if (/^\/(?:jobs|sponsor|oauth)(?:\/|$)/.test(value)) return 'https://www.ui-skills.com' + value;
+  if (/^\/mcp(?:\/rpc)?\/?(?:[?#]|$)/.test(value)) return value;
   if (!chinese && !/^\/en(?:\/|$)/.test(value) && !/\.[a-z0-9]+(?:[/?#]|$)/i.test(value) && !/^\/(?:api|\.well-known)(?:\/|$)/.test(value)) return '/en' + value;
   return value;
 }
-let loading;
 export function loadTranslations() {
-  if (!loading) loading = fetch('/i18n/zh-CN.json').then(response => {
-    if (!response.ok) throw new Error('Translation catalog unavailable');
-    return response.json();
-  }).catch(error => { loading = undefined; throw error; });
-  return loading;
+  return loadPublicJson('/i18n/zh-CN.json', 'translationVersion', data =>
+    data !== null && typeof data === 'object' && typeof data['My favorites'] === 'string',
+  );
 }

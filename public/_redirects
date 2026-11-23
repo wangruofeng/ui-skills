@@ -3,8 +3,6 @@
 /mcp/server /mcp/docs 302
 /jobs https://www.ui-skills.com/jobs 302
 /jobs/* https://www.ui-skills.com/jobs/:splat 302
-/mcp https://www.ui-skills.com/mcp 302
-/mcp/rpc https://www.ui-skills.com/mcp/rpc 302
 /sponsor https://www.ui-skills.com/sponsor 302
 /auth.md https://www.ui-skills.com/auth.md 302
 /oauth/* https://www.ui-skills.com/oauth/:splat 302
@@ -12,6 +10,5 @@
 /.well-known/oauth-authorization-server https://www.ui-skills.com/.well-known/oauth-authorization-server 302
 /.well-known/openid-configuration https://www.ui-skills.com/.well-known/openid-configuration 302
 /.well-known/oauth-protected-resource https://www.ui-skills.com/.well-known/oauth-protected-resource 302
-/.well-known/mcp/server-card.json https://www.ui-skills.com/.well-known/mcp/server-card.json 302
 /account /library/ 302
 /en/account /en/library/ 302

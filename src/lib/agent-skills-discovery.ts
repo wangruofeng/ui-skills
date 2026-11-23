@@ -4,6 +4,13 @@ import { join } from "node:path";
 import { registry, type RegistrySkill } from "../data/registry";
 import digestsManifest from "../data/agent-skills-digests.json";
 import { getRemoteSkill } from "./remote-skill";
+import { skillArtifactPath, toDiscoveryName } from "./skill-discovery-paths";
+
+export {
+  getRegistrySkillByDiscoveryName,
+  skillArtifactPath,
+  toDiscoveryName,
+} from "./skill-discovery-paths";
 
 const SCHEMA = "https://schemas.agentskills.io/discovery/0.2.0/schema.json";
 const PACKAGE_VERSION = "0.2.4";
@@ -69,38 +76,6 @@ const precomputedDigests = new Map(
     (digestsManifest as { digests?: Record<string, string> }).digests ?? {},
   ),
 );
-
-/** Discovery-safe name derived from the catalog pathSlug (CLI-compatible identity). */
-export function toDiscoveryName(pathSlug: string): string {
-  return pathSlug
-    .toLowerCase()
-    .replaceAll("/", "-")
-    .replaceAll(/[^a-z0-9-]+/g, "-")
-    .replaceAll(/-+/g, "-")
-    .replaceAll(/^-|-$/g, "")
-    .slice(0, 64);
-}
-
-/** Artifact path shared with the CLI (`ui-skills get` fetches the same URL). */
-export function skillArtifactPath(pathSlug: string): string {
-  return `/skills/${pathSlug
-    .split("/")
-    .map((segment) => encodeURIComponent(segment))
-    .join("/")}/llms.txt`;
-}
-
-export function getRegistrySkillByDiscoveryName(
-  name: string,
-): RegistrySkill | undefined {
-  const normalized = name.trim().toLowerCase();
-  return registry.find(
-    (entry) =>
-      toDiscoveryName(entry.pathSlug) === normalized ||
-      entry.slug === normalized ||
-      entry.pathSlug === normalized ||
-      entry.pathSlug.endsWith(`/${normalized}`),
-  );
-}
 
 export function readLocalSkillMarkdown(slug: string): string | null {
   return localSkillMarkdownBySlug.get(slug) ?? null;

@@ -12,4 +12,14 @@ for(const file of html){const raw=await readFile(file,'utf8');const doc=parse(ra
  }visit(doc);if(lang!==(en?'en':'zh-CN'))fail(`${file}: language ${lang}`);if(!file.endsWith('/404.html')){if(canonical!==origin+(route==='/en'?'/en/':route||'/'))fail(`${file}: canonical ${canonical}`);if(!redirect&&alternates!==3)fail(`${file}: hreflang ${alternates}`);}else if(!robots?.includes('noindex'))fail(`${file}: 404 indexable`);
  if(!h1&&!redirect)fail(`${file}: missing H1`);
 }
+// The Playbook comparison must show the route's language before React hydrates.
+for (const [prefix, labels] of [
+  ['', ['弹簧', '缓出']],
+  ['en/', ['Spring', 'Ease-out']],
+]) {
+  const file = `dist/${prefix}playbook/use-ease-not-spring-for-feedback/index.html`;
+  const raw = await readFile(file, 'utf8');
+  const demo = raw.match(/<astro-island[^>]+component-url="[^"]*demo-router[^"]*"[^>]*>([\s\S]*?)<\/astro-island>/)?.[1];
+  for (const label of labels) assert.ok(demo?.includes(`>${label}</button>`), `${file}: missing initial demo label ${label}`);
+}
 const xml=await readFile('dist/sitemap.xml','utf8');const locs=[...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map(x=>x[1]);assert.equal(locs.length,[...pages].filter(x=>!/^\/(?:en\/)?(?:agent|login|library)(?:\/|$)/.test(x)).length);assert.equal(new Set(locs).size,locs.length);assert.ok(!locs.some(x=>x.includes('404')));assert.ok(originals>0);assert.deepEqual(errors,[]);console.log(`Verified ${html.length} HTML pages, ${locs.length} sitemap URLs, ${originals} original-language skill bodies.`);

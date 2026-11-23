@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createElement, type ReactElement } from 'react';
-import { translateText, localizedHref } from '../public/i18n-core.mjs';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { translateText, localizedHref } from '../src/lib/i18n-core.mjs';
 import { localizeUiTree } from '../src/lib/ui-localization';
 const words = { 'Copy': '复制', 'Search skills': '搜索技能', 'No results found.': '没有找到结果。' };
 const t = (value: string) => translateText(value, words);
@@ -37,6 +38,19 @@ test('preserves the single element contract of tooltip and render primitives', (
   const rendered = localizeUiTree(node, t, true) as ReactElement<{children: ReactElement<{children: string}>}>;
   assert.equal(rendered.props.children.type, 'button');
   assert.equal(rendered.props.children.props.children, '复制');
+});
+
+test('translates static siblings and nested lists without React key warnings', (context) => {
+  const warn = context.mock.method(console, 'error', () => {});
+  const original = createElement('div', null,
+    createElement('p', null, 'Copy'),
+    [createElement('a', { key: 'search', href: '/skills' }, 'Search skills')],
+  );
+
+  const rendered = localizeUiTree(original, t, false) as ReactElement;
+  const html = renderToStaticMarkup(rendered);
+  assert.equal(warn.mock.callCount(), 0);
+  assert.equal(html, '<div><p>复制</p><a href="/en/skills">搜索技能</a></div>');
 });
 
 test('unknown prototype property names are treated as plain source text', () => {

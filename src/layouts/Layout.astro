@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { AccountMenu } from "../ui/account-menu";
+import { accountSessionKey } from "../lib/session-client";
 import { skills } from "../data/skills";
 import { playbook } from "../data/playbook";
 import Footer from "../ui/footer.astro";
@@ -157,15 +158,32 @@ const commandItems = [
               </a>
               <div class="relative z-20 flex shrink-0 items-center gap-2">
                   <a href="/en/" data-language-switch class="type-body-md text-content-secondary hover:text-content-primary hover:bg-fill-subtle focus-visible:outline-content-primary inline-flex h-8 min-w-8 items-center justify-center rounded px-2 focus-visible:outline-1 focus-visible:outline-offset-2" aria-label="Switch to English" lang="en">EN</a>
-                  <a
-                    href="/login"
-                    data-sign-in-link
-                    class="type-body-md text-content-secondary hover:text-content-primary focus-visible:outline-content-primary inline-flex items-center rounded-full focus-visible:outline-1 focus-visible:outline-offset-2"
-                  >
-                    Sign in
-                  </a>
-
-                  <AccountMenu client:load />
+                  <div class="header-account flex shrink-0 items-center">
+                    <span data-account-preview aria-hidden="true" translate="no" class="relative inline-flex size-8 items-center justify-center">
+                      <span hidden class="border-line-default bg-surface-subtle text-content-secondary type-body-sm size-8 content-center rounded-full border text-center font-[450]"></span>
+                      <img hidden alt="" width="32" height="32" class="border-line-default absolute inset-0 size-8 rounded-full border object-cover" />
+                    </span>
+                    <script is:inline define:vars={{ accountSessionKey }}>
+                      const preview = document.currentScript.previousElementSibling;
+                      try {
+                        const session = JSON.parse(sessionStorage.getItem(accountSessionKey))?.data;
+                        const avatar = session?.user;
+                        if (session?.expiresAt > Date.now() && typeof avatar?.initial === "string") {
+                          const initial = preview.querySelector("span");
+                          initial.textContent = avatar.initial;
+                          initial.hidden = false;
+                          if (typeof avatar.image === "string" && avatar.image.startsWith("https://")) {
+                            const image = preview.querySelector("img");
+                            image.addEventListener("load", () => { image.hidden = false; }, { once: true });
+                            image.src = avatar.image;
+                          }
+                        }
+                      } catch {
+                        // A fresh session request will populate the account menu.
+                      }
+                    </script>
+                    <AccountMenu client:load />
+                  </div>
                   <button
                     type="button"
                     aria-label="Search skills and playbook"
@@ -220,23 +238,20 @@ const commandItems = [
 
 
     <script>
-      import { getCachedSession } from "../lib/session-client";
-      const link = document.querySelector<HTMLAnchorElement>("[data-sign-in-link]");
-      if (link) {
-        const prefix = location.pathname.startsWith("/en/") ? "/en" : "";
-        link.href = `${prefix}/login/?returnTo=${encodeURIComponent(location.pathname + location.search)}`;
-        getCachedSession().then(({ data }) => { link.hidden = Boolean(data?.user); }).catch(() => {});
-      }
-    </script>
-    <script>
       import { installImageFades } from "../lib/image-fade";
       installImageFades();
     </script>
-    <script src="/fork-i18n.js" is:inline defer></script>
+    <script>
+      import "../lib/fork-i18n.js";
+    </script>
   </body>
 </html>
 
 <style>
+  :global(.header-account:has([data-account-ready]) [data-account-preview]) {
+    display: none;
+  }
+
   html,
   body {
     margin: 0;

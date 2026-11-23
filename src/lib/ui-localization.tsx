@@ -1,6 +1,9 @@
 import {
+  Children,
   cloneElement,
+  createContext,
   isValidElement,
+  useContext,
   useCallback,
   useEffect,
   useState,
@@ -10,27 +13,33 @@ import {
   loadTranslations,
   translateText,
   localizedHref,
-} from "../../public/i18n-core.mjs";
-const passthrough = (value: string) => value;
+} from "./i18n-core.mjs";
+type Dictionary = Record<string, string>;
+
+export const UiLocaleContext = createContext<{
+  chinese: boolean;
+  dictionary: Dictionary;
+} | null>(null);
+
 export function useUiText() {
-  const [dictionary, setDictionary] = useState<Record<string, string> | null>(
-    null,
-  );
+  const locale = useContext(UiLocaleContext);
+  const [loadedDictionary, setLoadedDictionary] = useState<Dictionary | null>(null);
+  const dictionary = loadedDictionary ?? locale?.dictionary;
   useEffect(() => {
-    if (/^\/en(?:\/|$)/.test(location.pathname)) return;
+    if (!(locale?.chinese ?? !/^\/en(?:\/|$)/.test(location.pathname))) return;
     let active = true;
     loadTranslations()
       .then((words) => {
-        if (active) setDictionary(words);
+        if (active) setLoadedDictionary(words);
       })
       .catch(() => {});
     return () => {
       active = false;
     };
-  }, []);
+  }, [locale?.chinese]);
   return useCallback(
     (value: string) =>
-      dictionary ? translateText(value, dictionary) : passthrough(value),
+      dictionary ? translateText(value, dictionary) : value,
     [dictionary],
   );
 }
@@ -63,16 +72,17 @@ export function localizeUiTree(
   if (typeof props.href === "string")
     next.href = localizedHref(props.href, chinese);
   if (props.children !== undefined) next.children = Array.isArray(props.children)
-    ? props.children.map(child => localizeUiTree(child, t, chinese))
+    ? Children.map(props.children, child => localizeUiTree(child, t, chinese))
     : localizeUiTree(props.children as ReactNode, t, chinese);
   return cloneElement(node, next);
 }
 export function useUiTree() {
   const t = useUiText();
-  // First render matches the English SSR output, including links.
+  const locale = useContext(UiLocaleContext);
+  // Islands without a locale use the same link paths on the server and first render.
   const [chinese, setChinese] = useState(true);
   useEffect(() => {
-    setChinese(!/^\/en(?:\/|$)/.test(location.pathname));
-  }, []);
-  return (node: ReactNode) => localizeUiTree(node, t, chinese);
+    if (!locale) setChinese(!/^\/en(?:\/|$)/.test(location.pathname));
+  }, [locale]);
+  return (node: ReactNode) => localizeUiTree(node, t, locale?.chinese ?? chinese);
 }

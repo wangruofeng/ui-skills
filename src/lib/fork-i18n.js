@@ -1,5 +1,6 @@
+import {loadTranslations, translateText, localizedHref} from './i18n-core.mjs';
+
 (async () => {
-  const {loadTranslations, translateText, localizedHref} = await import('/i18n-core.mjs');
   const zh = !/^\/en(?:\/|$)/.test(location.pathname);
   const words = zh ? await loadTranslations().catch(() => ({})) : {};
   const translate = text => zh ? translateText(text, words) : text;

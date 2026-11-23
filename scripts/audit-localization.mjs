@@ -1,6 +1,6 @@
 import {readFile,readdir,writeFile} from 'node:fs/promises';
 import {parse,serialize} from 'parse5';
-import {normalizeText,translateText} from '../public/i18n-core.mjs';
+import {normalizeText,translateText} from '../src/lib/i18n-core.mjs';
 const dictionary=JSON.parse(await readFile('public/i18n/zh-CN.json','utf8'));
 const missing=new Map();let pages=0,originals=0;
 async function walk(dir){for(const file of await readdir(dir,{withFileTypes:true})){const path=dir+'/'+file.name;if(file.isDirectory())await walk(path);else if(path.endsWith('.html')){

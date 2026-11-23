@@ -25,7 +25,7 @@ npx wrangler pages dev dist --port 4321
 
 完整保留上游注册表中的 804 条技能目录、公开专题、作者、智能体、组件、图标、设计系统、Design.md 与实践指南。中英文界面共享 `public/i18n/zh-CN.json` 词典，覆盖导航、目录简介、资源与设计文档、搜索、账号收藏、错误提示和元数据；技能名称、Markdown 正文、代码及安装命令保留原文。搜索支持 Command/Ctrl+K，可同时匹配中文译文与英文原文，详情与返回保持语言路径。翻译维护与漏译检查见 [多语言文案维护](docs/多语言文案维护.md)。
 
-本站支持 GitHub OAuth 登录与按账号持久保存技能收藏，入口位于右上角登录和技能详情星标。登录后通过头像菜单进入“我的收藏”。会保存 GitHub 提供的用户名称、邮箱、头像和必要会话数据，收藏写入本站独立 Cloudflare D1；不会申请仓库读写权限。招聘、赞助入口继续跳转原站，页底不再展示招聘与订阅推广卡片。MCP 文档指向原站提供的真实 MCP 服务。本站不运行原作者的统计上报。46 个原站静态图片已本地化；作者头像与其他明确的外部来源仍保留公开来源链接。
+本站支持 GitHub OAuth 登录与按账号持久保存技能收藏，入口位于右上角登录和技能详情星标。登录后通过头像菜单进入“我的收藏”。会保存 GitHub 提供的用户名称、邮箱、头像和必要会话数据，收藏写入本站独立 Cloudflare D1；不会申请仓库读写权限。招聘、赞助入口继续跳转原站，页底不再展示招聘与订阅推广卡片。本站通过 `/mcp` 提供只读 MCP 服务，支持查询技能目录和读取技能正文。本站不运行原作者的统计上报。46 个原站静态图片已本地化；作者头像与其他明确的外部来源仍保留公开来源链接。
 
 部分上游技能地址返回 404，原站公开快照也无法获取。此时详情会明确提示只能展示目录简介并提供原仓库链接，不将简介当作完整正文。每次构建生成 `dist/data/unavailable-sources.json` 记录当次无法获取的来源。
 
@@ -46,7 +46,7 @@ npm run verify:site
 
 ## 登录与收藏配置
 
-Pages Functions 仅接管 `/api/*`，公开内容仍为静态 HTML。GitHub OAuth 回调严格使用 `https://ui-skills.wangruofeng007.com/api/auth/callback/github`。生产环境的 `GITHUB_CLIENT_ID`、`GITHUB_CLIENT_SECRET`、`BETTER_AUTH_SECRET` 存放在 Cloudflare 加密环境变量，不进入源码。`AUTH_DB` 绑定独立数据库，迁移位于 `migrations/`。预览环境关闭登录且不绑定生产数据库。
+Pages Functions 接管 `/api/*`、`/mcp` 和兼容路径 `/mcp/rpc`，公开页面继续静态托管。GitHub OAuth 回调严格使用 `https://ui-skills.wangruofeng007.com/api/auth/callback/github`。生产环境的 `GITHUB_CLIENT_ID`、`GITHUB_CLIENT_SECRET`、`BETTER_AUTH_SECRET` 存放在 Cloudflare 加密环境变量，不进入源码。`AUTH_DB` 绑定独立数据库，迁移位于 `migrations/`。预览环境关闭登录且不绑定生产数据库。
 
 本地测试使用忽略的 `.dev.vars` 配置测试值，执行 `npx wrangler d1 migrations apply AUTH_DB --local`、`npm run build`，再用 `npx wrangler pages dev dist`。GitHub 真实登录需另配回调匹配 localhost 的开发 OAuth App；勿覆盖生产应用回调。
 

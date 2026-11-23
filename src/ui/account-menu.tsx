@@ -8,35 +8,22 @@ import { Menu } from "./menu";
 import { useEffect, useState } from "react";
 import { authClient } from "../lib/auth-client";
 import { clearLibraryCache } from "../lib/library-client";
-import { getCachedSession } from "../lib/session-client";
-
-type AccountUser = {
-  email: string;
-  image: string | null;
-  initial: string;
-};
+import { cacheSignedOutSession, getCachedSession, type AccountUser } from "../lib/session-client";
 
 export function AccountMenu() {
   const localizeUi = useUiTree();
 
   const t = useAccountText();
-  const [user, setUser] = useState<AccountUser | null>(null);
+  const [user, setUser] = useState<AccountUser | null | undefined>(undefined);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
     getCachedSession()
-      .then(({ data }) => {
-        if (!active) return;
-        const sessionUser = data?.user;
-        if (!sessionUser) return;
-        const label = sessionUser.name || sessionUser.email;
-        setUser({
-          email: sessionUser.email,
-          image: sessionUser.image ?? null,
-          initial: label.trim().charAt(0).toUpperCase() || "?",
-        });
+      .then(({ data, error }) => {
+        if (!active || error) return;
+        setUser(data?.user ?? null);
       })
       .catch(() => {});
     return () => {
@@ -51,6 +38,7 @@ export function AccountMenu() {
       .signOut()
       .then((result) => {
         if (result.error) throw new Error("Sign-out failed");
+        cacheSignedOutSession();
         clearLibraryCache();
         window.location.assign(
           location.pathname.startsWith("/en/") ? "/en/" : "/",
@@ -62,26 +50,43 @@ export function AccountMenu() {
       });
   };
 
-  if (!user) return null;
+  if (user === undefined) {
+    return null;
+  }
+
+  if (user === null) {
+    const prefix = /^\/en(?:\/|$)/.test(location.pathname) ? "/en" : "";
+    const returnTo = encodeURIComponent(location.pathname + location.search);
+    return (
+      <a
+        data-account-ready
+        href={`${prefix}/login/?returnTo=${returnTo}`}
+        className="type-body-md text-content-secondary hover:text-content-primary focus-visible:outline-content-primary inline-flex items-center rounded-full focus-visible:outline-1 focus-visible:outline-offset-2"
+      >
+        {t("Sign in")}
+      </a>
+    );
+  }
 
   return localizeUi(
     <Menu.Root>
       <Menu.Trigger
-        className="focus-visible:outline-content-primary inline-flex size-8 cursor-pointer items-center justify-center rounded-full outline-none focus-visible:outline-1 focus-visible:outline-offset-2"
+        data-account-ready
+        className="focus-visible:outline-content-primary relative inline-flex size-8 cursor-pointer items-center justify-center rounded-full outline-none focus-visible:outline-1 focus-visible:outline-offset-2"
         aria-label={t("Account")}
       >
-        {user.image ? (
+        <span aria-hidden="true" className="border-line-default bg-surface-subtle text-content-secondary type-body-sm inline-flex size-8 items-center justify-center rounded-full border font-[450]">
+          {user.initial}
+        </span>
+        {user.image && (
           <img
             src={user.image}
             alt=""
             width="32"
             height="32"
-            className="border-line-default size-8 rounded-full border object-cover"
+            className="border-line-default absolute inset-0 size-8 rounded-full border object-cover"
+            onError={(event) => { event.currentTarget.hidden = true; }}
           />
-        ) : (
-          <span className="border-line-default bg-surface-subtle text-content-secondary type-body-sm inline-flex size-8 items-center justify-center rounded-full border font-[450]">
-            {user.initial}
-          </span>
         )}
       </Menu.Trigger>
       <Menu.Popup className="w-64 rounded-xl px-1 py-1">
